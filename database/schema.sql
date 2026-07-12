@@ -45,3 +45,14 @@ CREATE TABLE IF NOT EXISTS auth_attempts (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX auth_attempts_lookup_idx (email, ip_address, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS learning_progress (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  completed_modules INT UNSIGNED NOT NULL DEFAULT 4,
+  total_modules INT UNSIGNED NOT NULL DEFAULT 12,
+  streak_days INT UNSIGNED NOT NULL DEFAULT 7,
+  minutes_this_week INT UNSIGNED NOT NULL DEFAULT 186,
+  projects_shipped INT UNSIGNED NOT NULL DEFAULT 1,
+  last_activity TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT learning_progress_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

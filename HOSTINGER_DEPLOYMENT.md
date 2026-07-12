@@ -61,6 +61,8 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 | `GET` | `/api/auth/me` | Return the signed-in user and profile | None |
 | `GET` | `/api/profile` | Return the member profile | None |
 | `PUT` | `/api/profile` | Update name, role, track, and goal | JSON: `{ "name", "role", "track", "goal" }` |
+| `GET` | `/api/progress` | Return persistent dashboard learning progress | None |
+| `PATCH` | `/api/progress` | Complete the next learning module | JSON: `{ "action": "complete_module" }` |
 | `GET` | `/api/ai/chat` | Return the latest 20 Vector AI messages | None |
 | `POST` | `/api/ai/chat` | Ask Vector and persist the answer | JSON: `{ "message": "..." }` |
 
@@ -81,6 +83,7 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 - `sessions`: revocable login sessions
 - `ai_messages`: member-specific Vector conversation history
 - `auth_attempts`: login security and throttling records
+- `learning_progress`: persistent modules, streak, focus time, and shipped-project counts
 
 ## Production checklist
 
