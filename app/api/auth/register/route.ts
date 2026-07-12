@@ -1,9 +1,10 @@
 import { hash } from "bcryptjs";
+import { createHash, randomBytes } from "node:crypto";
 import type { ResultSetHeader } from "mysql2";
 import type { PoolConnection } from "mysql2/promise";
 import { NextResponse } from "next/server";
 
-import { createSession, sessionCookie } from "../../../../lib/auth";
+import { sendVerificationEmail } from "../../../../lib/mailer";
 import {
   DatabaseConfigurationError,
   getDb,
@@ -137,23 +138,28 @@ export async function POST(request: Request) {
       [result.insertId]
     );
 
-    const token = await createSession(
-      result.insertId,
-      connection
+    const token = randomBytes(32).toString("base64url");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    await connection.execute(
+      "INSERT INTO email_verification_tokens (user_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 24 HOUR))",
+      [result.insertId, tokenHash]
     );
 
     await connection.commit();
 
+    try {
+      await sendVerificationEmail({ email, name, token });
+    } catch (mailError) {
+      console.error("Verification email failed:", mailError);
+      return redirectWithError(request, "Your account was created, but we could not send the verification email. Check the production SMTP settings and try resending it.");
+    }
+
     const destination = new URL(
-      "/dashboard?welcome=1",
+      `/verify-email?sent=1&email=${encodeURIComponent(email)}`,
       getPublicOrigin(request)
     );
 
-    const response = NextResponse.redirect(destination, 303);
-
-    response.cookies.set(sessionCookie(token));
-
-    return response;
+    return NextResponse.redirect(destination, 303);
   } catch (error) {
     if (connection) {
       try {

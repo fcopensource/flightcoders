@@ -26,11 +26,19 @@ DB_NAME=your_hostinger_database_name
 GROQ_API_KEY=your_groq_api_key
 GROQ_MODEL=llama-3.3-70b-versatile
 NEXT_PUBLIC_APP_URL=https://flightcoders.com
+APP_URL=https://flightcoders.com
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=hello@flightcoders.com
+SMTP_PASSWORD=your_hostinger_mailbox_password
+SMTP_FROM=FlightCoders <hello@flightcoders.com>
+ADMIN_EMAILS=your-admin@flightcoders.com
 ```
 
 Never commit `.env.local` or paste the Groq key into browser-side code. The implemented AI route reads it only on the server.
 
-`GROQ_MODEL` is optional because the backend has the displayed model as its default. All other variables are required for the complete production application.
+`GROQ_MODEL` is optional because the backend has the displayed model as its default. `SMTP_FROM` is optional and falls back to `SMTP_USER`. The database, application URL, and SMTP variables are required for registration and verified login. Separate multiple admin emails in `ADMIN_EMAILS` with commas.
 
 ## GitHub deployment
 
@@ -48,8 +56,12 @@ Never commit `.env.local` or paste the Groq key into browser-side code. The impl
 | Method | Endpoint | Purpose | Body |
 |---|---|---|---|
 | `GET` | `/api/health` | Health and MySQL connectivity check | None |
-| `POST` | `/api/auth/register` | Create an account and session | Form data: `name`, `email`, `password`, `confirmPassword`, optional `role`, optional `track`, `terms=on` |
+| `POST` | `/api/auth/register` | Create an account and send its verification email | Form data: `name`, `email`, `password`, `confirmPassword`, optional `role`, optional `track`, `terms=on` |
 | `POST` | `/api/auth/login` | Verify credentials and create a session | Form data: `email`, `password`, optional `next` |
+| `GET` | `/api/auth/verify-email?token=...` | Verify a new member email | None |
+| `POST` | `/api/auth/verify-email` | Resend a verification message | Form data: `email` |
+| `GET` | `/api/blogs` | List published SEO articles | None |
+| `GET` | `/api/jobs` | List current job openings | None |
 
 ### Authenticated
 
@@ -66,6 +78,17 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 | `GET` | `/api/ai/chat` | Return the latest 20 Vector AI messages | None |
 | `POST` | `/api/ai/chat` | Ask Vector and persist the answer | JSON: `{ "message": "..." }` |
 
+### Admin publishing
+
+These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS`.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/api/blogs` | Publish a blog article |
+| `PATCH`, `DELETE` | `/api/blogs/:id` | Update or delete an article |
+| `POST` | `/api/jobs` | Publish a job opening |
+| `PATCH`, `DELETE` | `/api/jobs/:id` | Update or delete a job opening |
+
 ## Security behavior
 
 - Passwords are hashed with bcrypt cost 12 and never stored in plain text.
@@ -73,6 +96,7 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 - Only SHA-256 hashes of session tokens are stored in MySQL.
 - Protected endpoints resolve identity on the server.
 - Login attempts are throttled after 10 failures in a 15-minute window.
+- New accounts cannot log in until their signed, single-use email link is verified.
 - AI access requires login, is limited to 30 prompts per member per day, and keeps the Groq key server-only.
 - SQL values use prepared statements.
 
@@ -84,6 +108,9 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 - `ai_messages`: member-specific Vector conversation history
 - `auth_attempts`: login security and throttling records
 - `learning_progress`: persistent modules, streak, focus time, and shipped-project counts
+- `email_verification_tokens`: hashed, single-use, 24-hour verification tokens
+- `blog_posts`: dynamic ranking content and article metadata
+- `jobs`: dynamic openings and application links
 
 ## Production checklist
 
@@ -92,6 +119,6 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 - Replace all sample environment values.
 - Import the schema before accepting registrations.
 - Confirm `/api/health` is healthy.
-- Register a test account, log out, and log back in.
+- Create a Hostinger mailbox, add the SMTP variables, register a test account, verify the email, then log in.
 - Add the Groq key and test Vector from the protected dashboard.
 - Configure Hostinger backups for the MySQL database.

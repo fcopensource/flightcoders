@@ -8,6 +8,7 @@ import { getDb } from "../../../../lib/db";
 interface LoginUser extends RowDataPacket {
   id: number;
   password_hash: string;
+  email_verified_at: Date | null;
 }
 
 function getPublicOrigin(request: Request): string {
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
 
     const [users] = await db.execute<LoginUser[]>(
       `
-        SELECT id, password_hash
+        SELECT id, password_hash, email_verified_at
         FROM users
         WHERE email = ?
         LIMIT 1
@@ -148,6 +149,10 @@ export async function POST(request: Request) {
         request,
         "Incorrect email or password."
       );
+    }
+
+    if (!user.email_verified_at) {
+      return redirectWithError(request, "Verify your email before logging in. You can request a fresh verification link below.");
     }
 
     await db.execute(

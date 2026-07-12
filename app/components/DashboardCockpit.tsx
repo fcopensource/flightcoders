@@ -15,7 +15,7 @@ export function DashboardCockpit({ name, track, initialProgress }: { name:string
   const moduleTitle = useMemo(() => ["Telemetry foundations","Coordinate frames","Control loops","State estimation","Sensor fusion","Fault handling","Mission planning","Flight data pipelines","Simulation","Safety review","Systems integration","Capstone launch"][Math.min(progress.completed_modules,11)], [progress.completed_modules]);
   async function completeModule(){ setUpdating(true); setNotice(""); try { const response=await fetch("/api/progress",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"complete_module"})}); const data=await response.json(); if(!response.ok) throw new Error(data.error||"Could not update progress"); setProgress(data.progress); setNotice("Module logged. Flight path updated."); } catch(error){setNotice(error instanceof Error?error.message:"Update failed");} finally{setUpdating(false);} }
   return <>
-    <div className="cockpit-welcome"><div><span className="cockpit-label"><i/> FLIGHT DECK / ONLINE</span><h1>Good to see you,<br/><em>{firstName}.</em></h1><p>Your systems are synced. Continue the mission or explore a new signal.</p></div><div className="cockpit-actions"><Link href="/tracks">Explore tracks</Link><form action="/api/auth/logout" method="post"><button type="submit">Sign out ↗</button></form></div></div>
+    <div className="cockpit-welcome"><div><span className="cockpit-label"><i/> FLIGHT DECK / ONLINE</span><h1>Good to see you,<br/><em>{firstName}.</em></h1><p>Your systems are synced. Continue the mission or explore a new signal.</p></div><div className="cockpit-actions"><Link href="/tracks">Explore tracks ↗</Link></div></div>
 
     <section className="stat-strip" aria-label="Learning overview"><article><span>ACTIVE TRACK</span><b>{track}</b><small>Intermediate flight path</small></article><article><span>MISSION STREAK</span><b>{progress.streak_days} <em>days</em></b><small>Personal best: 12 days</small></article><article><span>FOCUS THIS WEEK</span><b>{focusHours}</b><small>+42 min vs last week</small></article><article><span>PROJECTS SHIPPED</span><b>{String(progress.projects_shipped).padStart(2,"0")}</b><small>Next review in 3 days</small></article></section>
 
@@ -34,6 +34,6 @@ export function DashboardCockpit({ name, track, initialProgress }: { name:string
 
       <article className="cockpit-card achievement-card"><div className="card-label"><span>07 / CLEARANCES</span><b>3 OF 12</b></div><div className="badge-row"><span><i>✦</i><b>First Flight</b><small>Earned</small></span><span><i>⌁</i><b>7-Day Signal</b><small>Earned</small></span><span><i>◎</i><b>Code Reviewer</b><small>Earned</small></span><span className="locked"><i>◇</i><b>Autonomy Ace</b><small>Locked</small></span></div></article>
     </div>
-    <div className="mentor-heading"><span>08 / AI MISSION SUPPORT</span><h2>Ask Vector when you’re stuck.</h2><p>Debug code, unpack concepts, or shape your next flight-tech project.</p></div><AIMentor/>
+    <div className="mentor-heading" id="ai-mentor"><span>08 / AI MISSION SUPPORT</span><h2>Ask Vector when you’re stuck.</h2><p>Debug code, unpack concepts, or shape your next flight-tech project.</p></div><AIMentor/>
   </>;
 }
