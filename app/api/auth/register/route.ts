@@ -18,8 +18,9 @@ function getBaseUrl(request: Request) {
     return configuredUrl.replace(/\/$/, "");
   }
 
-  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ?? "https";
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto =
+    request.headers.get("x-forwarded-proto") ?? "https";
 
   if (forwardedHost) {
     return `${forwardedProto}://${forwardedHost}`;
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
 
   const password = String(form.get("password") ?? "");
   const confirmPassword = String(form.get("confirmPassword") ?? "");
+
   const role = String(form.get("role") ?? "")
     .trim()
     .slice(0, 80);
@@ -86,6 +88,7 @@ export async function POST(request: Request) {
     await connection.beginTransaction();
 
     const passwordHash = await hash(password, 12);
+
     const [result] = await connection.execute<ResultSetHeader>(
       "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
       [name, email, passwordHash]
