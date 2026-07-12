@@ -62,6 +62,7 @@ Never commit `.env.local` or paste the Groq key into browser-side code. The impl
 | `POST` | `/api/auth/verify-email` | Resend a verification message | Form data: `email` |
 | `GET` | `/api/blogs` | List published SEO articles | None |
 | `GET` | `/api/jobs` | List current job openings | None |
+| `GET` | `/api/projects` | List featured FlightCoders projects | None |
 
 ### Authenticated
 
@@ -88,6 +89,8 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 | `PATCH`, `DELETE` | `/api/blogs/:id` | Update or delete an article |
 | `POST` | `/api/jobs` | Publish a job opening |
 | `PATCH`, `DELETE` | `/api/jobs/:id` | Update or delete a job opening |
+| `POST` | `/api/projects` | Publish a project case study |
+| `PATCH`, `DELETE` | `/api/projects/:id` | Update or delete a project |
 
 ## Security behavior
 
@@ -111,6 +114,7 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 - `email_verification_tokens`: hashed, single-use, 24-hour verification tokens
 - `blog_posts`: dynamic ranking content and article metadata
 - `jobs`: dynamic openings and application links
+- `projects`: dynamic project portfolio and detailed case studies
 
 ## Production checklist
 
