@@ -12,7 +12,7 @@ function smtpConfig() {
 export async function sendVerificationEmail(input: { email:string; name:string; token:string }) {
   const config = smtpConfig();
   const appUrl = (process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "https://flightcoders.com").replace(/\/+$/, "");
-  const verificationUrl = `${appUrl}/verify-email?token=${encodeURIComponent(input.token)}`;
+  const verificationUrl = `${appUrl}/api/auth/verify-email?token=${encodeURIComponent(input.token)}`;
   const transporter = nodemailer.createTransport({ host:config.host, port:config.port, secure:config.secure, auth:{ user:config.user, pass:config.pass } });
   await transporter.sendMail({
     from: process.env.SMTP_FROM || `FlightCoders <${config.user}>`, to:input.email,
