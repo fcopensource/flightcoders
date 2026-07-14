@@ -14,6 +14,7 @@ Use a Hostinger **Node.js Web App** on a Business Web Hosting, Cloud, or VPS pla
 6. Add the environment variables below in the Hostinger app settings.
 7. Connect `flightcoders.com` to the Node.js application and enable its automatic SSL certificate.
 8. Deploy, then open `https://flightcoders.com/api/health` and confirm it returns `database: connected`.
+9. In **hPanel → Websites → Dashboard → Performance → CDN**, press **Purge cache** after every production deployment. This prevents cached HTML from referencing CSS chunks removed by the new build.
 
 ## Environment variables
 
@@ -138,6 +139,8 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 ## Production checklist
 
 - Use HTTPS on the final domain.
+- Purge Hostinger CDN cache immediately after deploying a new Next.js build.
+- Open the stylesheet URL from the deployed page source and confirm it returns HTTP `200`, not `404`.
 - Confirm `https://flightcoders.com/robots.txt` and `/sitemap.xml` load.
 - Replace all sample environment values.
 - Import the schema before accepting registrations.
