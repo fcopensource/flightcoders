@@ -30,6 +30,7 @@ export default async function Home() {
       <SiteHeader />
 
       <section className="hero shell" id="top">
+        <div className="hero-atmosphere" aria-hidden="true"><span className="flight-arc arc-one"><i>✦</i></span><span className="flight-arc arc-two"/><span className="hero-coordinate">37.7749° N / 122.4194° W</span></div>
         <div className="eyebrow"><span className="pulse" /> Enrollment open · Cohort 04</div>
         <div className="hero-grid">
           <div className="hero-copy">
@@ -46,6 +47,8 @@ export default async function Home() {
         </div>
         <div className="trusted"><span>BUILT FOR THE NEXT GENERATION OF</span><b>AEROSPACE</b><b>AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
       </section>
+
+      <CodeLab/>
 
       <section className="dark-section" id="method">
         <div className="shell">
@@ -101,3 +104,4 @@ import Link from "next/link";
 import { getDb } from "../lib/db";
 import { SiteHeader } from "./components/SiteHeader";
 import { SiteFooter } from "./components/SiteFooter";
+import { CodeLab } from "./components/CodeLab";

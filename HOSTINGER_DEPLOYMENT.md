@@ -34,11 +34,23 @@ SMTP_USER=hello@flightcoders.com
 SMTP_PASSWORD=your_hostinger_mailbox_password
 SMTP_FROM=FlightCoders <hello@flightcoders.com>
 ADMIN_EMAILS=your-admin@flightcoders.com
+GITHUB_CLIENT_ID=your_github_oauth_client_id
+GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
 ```
 
 Never commit `.env.local` or paste the Groq key into browser-side code. The implemented AI route reads it only on the server.
 
 `GROQ_MODEL` is optional because the backend has the displayed model as its default. `SMTP_FROM` is optional and falls back to `SMTP_USER`. The database, application URL, and SMTP variables are required for registration and verified login. Separate multiple admin emails in `ADMIN_EMAILS` with commas.
+
+### GitHub sign-in setup
+
+1. In GitHub open **Settings → Developer settings → OAuth Apps → New OAuth App**.
+2. Set **Homepage URL** to `https://flightcoders.com`.
+3. Set **Authorization callback URL** to `https://flightcoders.com/api/auth/github/callback`.
+4. Add the generated Client ID and Client Secret to the Hostinger environment variables above.
+5. Redeploy or restart the Node.js application after saving them.
+
+FlightCoders requests only `read:user` and `user:email`. It requires a verified GitHub email, does not store the GitHub access token, and creates the same revocable database session as password login.
 
 ## GitHub deployment
 
@@ -58,6 +70,8 @@ Never commit `.env.local` or paste the Groq key into browser-side code. The impl
 | `GET` | `/api/health` | Health and MySQL connectivity check | None |
 | `POST` | `/api/auth/register` | Create an account and send its verification email | Form data: `name`, `email`, `password`, `confirmPassword`, optional `role`, optional `track`, `terms=on` |
 | `POST` | `/api/auth/login` | Verify credentials and create a session | Form data: `email`, `password`, optional `next` |
+| `GET` | `/api/auth/github` | Begin GitHub OAuth login | Optional query: `next` |
+| `GET` | `/api/auth/github/callback` | Validate GitHub OAuth and create a session | GitHub callback parameters |
 | `GET` | `/api/auth/verify-email?token=...` | Verify a new member email | None |
 | `POST` | `/api/auth/verify-email` | Resend a verification message | Form data: `email` |
 | `GET` | `/api/blogs` | List published SEO articles | None |
@@ -112,6 +126,7 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 - `auth_attempts`: login security and throttling records
 - `learning_progress`: persistent modules, streak, focus time, and shipped-project counts
 - `email_verification_tokens`: hashed, single-use, 24-hour verification tokens
+- `social_accounts`: GitHub identity links without stored OAuth access tokens
 - `blog_posts`: dynamic ranking content and article metadata
 - `jobs`: dynamic openings and application links
 - `projects`: dynamic project portfolio and detailed case studies

@@ -22,6 +22,20 @@ CREATE TABLE IF NOT EXISTS email_verification_tokens (
   CONSTRAINT verification_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS social_accounts (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  provider VARCHAR(40) NOT NULL,
+  provider_user_id VARCHAR(190) NOT NULL,
+  provider_username VARCHAR(190) NULL,
+  avatar_url VARCHAR(500) NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY social_provider_user_unique (provider, provider_user_id),
+  INDEX social_user_idx (user_id),
+  CONSTRAINT social_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS profiles (
   user_id BIGINT UNSIGNED PRIMARY KEY,
   role VARCHAR(80) NULL,
