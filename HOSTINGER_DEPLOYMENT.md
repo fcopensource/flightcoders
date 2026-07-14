@@ -92,6 +92,8 @@ The browser sends the secure `fc_session` HTTP-only cookie automatically.
 | `PATCH` | `/api/progress` | Complete the next learning module | JSON: `{ "action": "complete_module" }` |
 | `GET` | `/api/ai/chat` | Return the latest 20 Vector AI messages | None |
 | `POST` | `/api/ai/chat` | Ask Vector and persist the answer | JSON: `{ "message": "..." }` |
+| `GET` | `/api/lab/submissions` | Return the member's latest Flight Lab submissions | None |
+| `POST` | `/api/lab/submissions` | Save source, runtime, and validation outcome | JSON: `{ "challengeSlug", "language", "code", "passed", "testsPassed", "totalTests", "runtimeMs" }` |
 
 ### Admin publishing
 
@@ -116,6 +118,7 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 - New accounts cannot log in until their signed, single-use email link is verified.
 - AI access requires login, is limited to 30 prompts per member per day, and keeps the Groq key server-only.
 - SQL values use prepared statements.
+- Flight Lab programs execute in a disposable browser worker with a two-second limit; untrusted learner code never executes on the application server.
 
 ## Database tables
 
@@ -125,6 +128,7 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 - `ai_messages`: member-specific Vector conversation history
 - `auth_attempts`: login security and throttling records
 - `learning_progress`: persistent modules, streak, focus time, and shipped-project counts
+- `code_submissions`: Flight Lab source code, validation totals, runtime, and completion history
 - `email_verification_tokens`: hashed, single-use, 24-hour verification tokens
 - `social_accounts`: GitHub identity links without stored OAuth access tokens
 - `blog_posts`: dynamic ranking content and article metadata

@@ -86,6 +86,21 @@ CREATE TABLE IF NOT EXISTS learning_progress (
   CONSTRAINT learning_progress_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS code_submissions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  challenge_slug VARCHAR(120) NOT NULL,
+  language VARCHAR(30) NOT NULL DEFAULT 'javascript',
+  source_code MEDIUMTEXT NOT NULL,
+  passed BOOLEAN NOT NULL DEFAULT FALSE,
+  tests_passed SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  total_tests SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  runtime_ms INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX submissions_user_challenge_idx (user_id, challenge_slug, created_at),
+  CONSTRAINT submissions_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS blog_posts (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   slug VARCHAR(180) NOT NULL UNIQUE,
