@@ -10,13 +10,21 @@ const features = [
   ["◎", "Find your crew", "Get feedback, pair with peers, and meet builders who speak your language."],
 ];
 
+interface HomePost extends RowDataPacket { slug:string; title:string; excerpt:string; category:string; published_at:Date }
+interface HomeProject extends RowDataPacket { slug:string; name:string; tagline:string; technologies:string; accent_color:string }
+
 // Keep the homepage HTML tied to the current build. Long-lived CDN caching can
 // otherwise leave visitors with an old HTML document that references deleted
 // hashed CSS assets after a deployment.
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function Home() {
+export default async function Home() {
+  const db=getDb();
+  const [[posts],[projects]]=await Promise.all([
+    db.execute<HomePost[]>("SELECT slug,title,excerpt,category,published_at FROM blog_posts WHERE published=TRUE ORDER BY published_at DESC,id DESC LIMIT 3"),
+    db.execute<HomeProject[]>("SELECT slug,name,tagline,technologies,accent_color FROM projects WHERE featured=TRUE ORDER BY launched_at DESC,id DESC LIMIT 2"),
+  ]);
   return (
     <main>
       <SiteHeader />
@@ -57,6 +65,21 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="engineering-proof">
+        <div className="shell proof-head"><div><span>// ENGINEERING, NOT EDUTAINMENT</span><h2>Train against<br/><em>production reality.</em></h2></div><p>FlightCoders brings software engineering rigor to high-consequence systems: observable code, measurable performance, deliberate failure handling, and projects that survive review.</p></div>
+        <div className="shell proof-stats"><article><strong>24+</strong><span>BUILD SYSTEMS<br/>IN THE LAB</span></article><article><strong>600+</strong><span>GLOBAL<br/>DEVELOPERS</span></article><article><strong>18</strong><span>EXPERT-LED<br/>REVIEWS</span></article><article><strong>92%</strong><span>SHIP A<br/>CAPSTONE</span></article></div>
+        <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> ROS 2 <i/> PX4 <i/> MAVLINK <i/> C++ <i/> POSTGRESQL <i/> COMPUTER VISION <i/> CONTROL SYSTEMS <i/> DIGITAL TWINS</div></div>
+      </section>
+
+      <section className="home-projects shell">
+        <div className="home-section-intro"><span>// SHIPPED BY FLIGHTCODERS</span><h2>We teach builders.<br/>We build, too.</h2><Link href="/projects">Explore all products ↗</Link></div>
+        <div className="home-project-grid">{projects.map((project,index)=><Link href={`/projects/${project.slug}`} className="home-project" key={project.slug} style={{"--project-accent":project.accent_color} as React.CSSProperties}><span>0{index+1} / LIVE PRODUCT</span><div className="home-project-mark">{project.name.slice(0,1)}</div><h3>{project.name}</h3><p>{project.tagline}</p><div>{project.technologies.split(",").slice(0,4).map(item=><b key={item}>{item.trim()}</b>)}</div><strong>View case study ↗</strong></Link>)}</div>
+      </section>
+
+      <section className="home-notes">
+        <div className="shell home-notes-inner"><div className="home-section-intro"><span>// LATEST FLIGHT NOTES</span><h2>Engineering signals<br/>worth keeping.</h2><Link href="/blog">Browse the technical library ↗</Link></div><div className="home-note-list">{posts.map((post,index)=><article key={post.slug}><span>{String(index+1).padStart(2,"0")}</span><div><small>{post.category} · {new Date(post.published_at).toLocaleDateString("en",{month:"short",day:"2-digit"})}</small><h3>{post.title}</h3><p>{post.excerpt}</p></div><Link href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>↗</Link></article>)}</div></div>
+      </section>
+
       <section className="community" id="community">
         <div className="shell community-grid">
           <div className="quote-mark">“</div>
@@ -73,5 +96,8 @@ export default function Home() {
     </main>
   );
 }
+import type { RowDataPacket } from "mysql2";
+import Link from "next/link";
+import { getDb } from "../lib/db";
 import { SiteHeader } from "./components/SiteHeader";
 import { SiteFooter } from "./components/SiteFooter";
