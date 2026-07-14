@@ -10,6 +10,12 @@ const features = [
   ["◎", "Find your crew", "Get feedback, pair with peers, and meet builders who speak your language."],
 ];
 
+// Keep the homepage HTML tied to the current build. Long-lived CDN caching can
+// otherwise leave visitors with an old HTML document that references deleted
+// hashed CSS assets after a deployment.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function Home() {
   return (
     <main>
