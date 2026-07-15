@@ -148,3 +148,11 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 - Create a Hostinger mailbox, add the SMTP variables, register a test account, verify the email, then log in.
 - Add the Groq key and test Vector from the protected dashboard.
 - Configure Hostinger backups for the MySQL database.
+
+## Member experience included
+
+- Three persistent interface themes: Runway, Midnight, and Aurora.
+- Global command navigation with `Ctrl/Command + K`.
+- Flight Operations Lab with browser-isolated JavaScript execution and persistent submission telemetry.
+- Per-mission drafts saved on the member's own device; `Ctrl/Command + S` saves and `Ctrl/Command + Enter` runs validation.
+- Advanced aircraft-system missions, searchable mission bank, dashboard launchpad, AI mentor, profiles, progress, projects, jobs, and technical publishing.
