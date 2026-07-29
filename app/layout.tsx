@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import {JetBrains_Mono,Manrope} from "next/font/google";
 import "./globals.css";
 import { GlobalControls } from "./components/GlobalControls";
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com";
+const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
+const jetbrains=JetBrains_Mono({subsets:["latin"],variable:"--font-flight-mono",display:"swap"});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -16,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}<GlobalControls/></body></html>;
+  return <html lang="en" className={`${manrope.variable} ${jetbrains.variable}`}><body>{children}<GlobalControls/></body></html>;
 }

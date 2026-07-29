@@ -12,8 +12,10 @@
     "lint": "eslint . --ignore-pattern .next"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "bcryptjs": "^3.0.2",
     "groq-sdk": "^0.37.0",
+    "monaco-editor": "^0.52.2",
     "mysql2": "^3.14.5",
     "next": "16.2.6",
     "nodemailer": "^9.0.3",
