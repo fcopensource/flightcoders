@@ -35,7 +35,7 @@ export default async function Home() {
         <div className="hero-grid">
           <div className="hero-copy">
             <h1>Where code<br />learns to <em>fly.</em></h1>
-            <p>Learn the software powering modern aviation. Build real systems, guided by engineers who ship them.</p>
+            <p>Learn programming by building aviation software. Write, compile, and test real code for flight systems, drones, autonomy, telemetry, and safety-critical engineering.</p>
             <div className="hero-actions"><a className="button" href="#tracks">Explore learning tracks <span>↗</span></a><a className="text-link" href="#method">See how it works <span>↓</span></a></div>
           </div>
           <div className="flight-card" aria-label="Flight code example">
@@ -45,7 +45,7 @@ export default async function Home() {
             <div className="telemetry"><span><small>ALTITUDE</small>12,400 <b>FT</b></span><span><small>AIRSPEED</small>268 <b>KT</b></span><span><small>HEADING</small>074 <b>°</b></span></div>
           </div>
         </div>
-        <div className="trusted"><span>BUILT FOR THE NEXT GENERATION OF</span><b>AEROSPACE</b><b>AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
+        <div className="trusted"><span>THE CODING PLATFORM FOR</span><b>AVIATION SOFTWARE</b><b>DRONE AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
       </section>
 
       <CodeLab/>

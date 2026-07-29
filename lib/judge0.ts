@@ -1,8 +1,17 @@
 export const judgeLanguages = {
-  javascript: {id: 63, label: "JavaScript", file: "flight_solution.js"},
-  python: {id: 71, label: "Python", file: "flight_solution.py"},
-  cpp: {id: 54, label: "C++", file: "flight_solution.cpp"},
-  java: {id: 62, label: "Java", file: "Main.java"},
+  javascript: {id: 102, label: "JavaScript", file: "flight_solution.js"},
+  typescript: {id: 101, label: "TypeScript", file: "flight_solution.ts"},
+  python: {id: 100, label: "Python", file: "flight_solution.py"},
+  java: {id: 91, label: "Java", file: "Main.java"},
+  c: {id: 103, label: "C", file: "flight_solution.c"},
+  cpp: {id: 105, label: "C++", file: "flight_solution.cpp"},
+  csharp: {id: 51, label: "C#", file: "Main.cs"},
+  go: {id: 106, label: "Go", file: "main.go"},
+  rust: {id: 108, label: "Rust", file: "main.rs"},
+  kotlin: {id: 111, label: "Kotlin", file: "Main.kt"},
+  ruby: {id: 72, label: "Ruby", file: "flight_solution.rb"},
+  php: {id: 98, label: "PHP", file: "flight_solution.php"},
+  swift: {id: 83, label: "Swift", file: "main.swift"},
 } as const;
 
 export type JudgeLanguage = keyof typeof judgeLanguages;

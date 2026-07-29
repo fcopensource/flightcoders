@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import {JetBrains_Mono,Manrope} from "next/font/google";
+import {Manrope} from "next/font/google";
 import "./globals.css";
 import { GlobalControls } from "./components/GlobalControls";
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com";
 const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
-const jetbrains=JetBrains_Mono({subsets:["latin"],variable:"--font-flight-mono",display:"swap"});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "FlightCoders — Code the future of flight", template: "%s · FlightCoders" },
-  description: "Learn the software powering modern aviation through expert-led, project-based learning tracks.",
+  description: "Learn programming by building and testing real aviation, drone, autonomy, telemetry, and flight-safety software.",
   applicationName: "FlightCoders",
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
@@ -19,5 +18,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" className={`${manrope.variable} ${jetbrains.variable}`}><body>{children}<GlobalControls/></body></html>;
+  return <html lang="en" className={manrope.variable}><body>{children}<GlobalControls/></body></html>;
 }
