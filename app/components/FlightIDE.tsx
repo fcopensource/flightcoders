@@ -1,83 +1,91 @@
 "use client";
-import {useState} from "react";
+import {useMemo,useState} from "react";
 import Editor from "@monaco-editor/react";
-import {flightChallenges} from "../../lib/flightChallenges";
 import {judgeLanguages,type JudgeLanguage} from "../../lib/judge0";
 
 type JudgeResult={
  accepted:boolean;status:string;stdout:string;stderr:string;compileOutput:string;
  message:string;runtimeMs:number;memoryKb:number;
 };
-type HistoryItem={challenge_slug:string;language:string;passed:number;tests_passed:number;total_tests:number;runtime_ms:number;created_at:string};
-
+type FlightState="standby"|"compiling"|"airborne"|"fault";
 const languages=Object.entries(judgeLanguages) as [JudgeLanguage,(typeof judgeLanguages)[JudgeLanguage]][];
 
-function starterFor(language:JudgeLanguage,index:number){
- const challenge=flightChallenges[index];
- if(language==="javascript")return `${challenge.starter}\n\n// Standard input is available through the FlightCoders judge harness.\nconsole.log("Flight program ready");\n`;
- if(language==="typescript")return `// ${challenge.title}\nimport * as fs from "fs";\nconst input: string = fs.readFileSync(0, "utf8");\n// TODO: implement the flight contract.\nconsole.log("Flight program ready");\n`;
- if(language==="python")return `# ${challenge.title}\n# Read input, implement the flight contract, then print the result.\nimport sys\n\ndef solve(data: str):\n    # TODO: implement mission logic\n    return "Flight program ready"\n\nif __name__ == "__main__":\n    print(solve(sys.stdin.read()))\n`;
- if(language==="c")return `// ${challenge.title}\n#include <stdio.h>\n\nint main(void) {\n    // TODO: parse stdin and implement the flight contract.\n    puts("Flight program ready");\n    return 0;\n}\n`;
- if(language==="cpp")return `// ${challenge.title}\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    // TODO: parse stdin and implement the flight contract.\n    string line;\n    while (getline(cin, line)) { /* ingest telemetry */ }\n    cout << "Flight program ready" << '\\n';\n    return 0;\n}\n`;
- if(language==="java")return `// ${challenge.title}\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));\n        while (input.readLine() != null) { /* ingest telemetry */ }\n        System.out.println("Flight program ready");\n    }\n}\n`;
- if(language==="csharp")return `// ${challenge.title}\nusing System;\n\npublic class MainClass {\n    public static void Main() {\n        // TODO: implement the flight contract.\n        Console.WriteLine("Flight program ready");\n    }\n}\n`;
- if(language==="go")return `// ${challenge.title}\npackage main\n\nimport "fmt"\n\nfunc main() {\n    // TODO: implement the flight contract.\n    fmt.Println("Flight program ready")\n}\n`;
- if(language==="rust")return `// ${challenge.title}\nfn main() {\n    // TODO: implement the flight contract.\n    println!("Flight program ready");\n}\n`;
- if(language==="kotlin")return `// ${challenge.title}\nfun main() {\n    // TODO: implement the flight contract.\n    println("Flight program ready")\n}\n`;
- if(language==="ruby")return `# ${challenge.title}\ninput = STDIN.read\n# TODO: implement the flight contract.\nputs "Flight program ready"\n`;
- if(language==="php")return `<?php\n// ${challenge.title}\n$input = stream_get_contents(STDIN);\n// TODO: implement the flight contract.\necho "Flight program ready\\n";\n`;
- return `// ${challenge.title}\nimport Foundation\n\nlet input = String(data: FileHandle.standardInput.readDataToEndOfFile(), encoding: .utf8) ?? ""\n// TODO: implement the flight contract.\nprint("Flight program ready")\n`;
+function starterFor(language:JudgeLanguage){
+ if(language==="javascript")return `// FlightCoders free-flight playground\nconst aircraft = { callSign: "FC-101", altitude: 35000, speed: 480 };\nconsole.log(\`\${aircraft.callSign} cleared for takeoff\`);\nconsole.log(\`Cruising at \${aircraft.altitude} ft · \${aircraft.speed} kt\`);\n`;
+ if(language==="typescript")return `type Aircraft = { callSign: string; altitude: number; speed: number };\nconst aircraft: Aircraft = { callSign: "FC-101", altitude: 35000, speed: 480 };\nconsole.log(\`\${aircraft.callSign} cleared for takeoff\`);\n`;
+ if(language==="python")return `# FlightCoders free-flight playground\naircraft = {"call_sign": "FC-101", "altitude": 35000, "speed": 480}\nprint(f"{aircraft['call_sign']} cleared for takeoff")\nprint(f"Cruising at {aircraft['altitude']} ft · {aircraft['speed']} kt")\n`;
+ if(language==="java")return `public class Main {\n    public static void main(String[] args) {\n        String callSign = "FC-101";\n        int altitude = 35000;\n        int speed = 480;\n        System.out.println(callSign + " cleared for takeoff");\n        System.out.println("Cruising at " + altitude + " ft · " + speed + " kt");\n    }\n}\n`;
+ if(language==="c")return `#include <stdio.h>\nint main(void) {\n    printf("FC-101 cleared for takeoff\\n");\n    printf("Cruising at 35000 ft · 480 kt\\n");\n    return 0;\n}\n`;
+ if(language==="cpp")return `#include <iostream>\nusing namespace std;\nint main() {\n    cout << "FC-101 cleared for takeoff" << '\\n';\n    cout << "Cruising at 35000 ft · 480 kt" << '\\n';\n    return 0;\n}\n`;
+ if(language==="csharp")return `using System;\npublic class MainClass {\n    public static void Main() {\n        Console.WriteLine("FC-101 cleared for takeoff");\n        Console.WriteLine("Cruising at 35000 ft · 480 kt");\n    }\n}\n`;
+ if(language==="go")return `package main\nimport "fmt"\nfunc main() {\n    fmt.Println("FC-101 cleared for takeoff")\n    fmt.Println("Cruising at 35000 ft · 480 kt")\n}\n`;
+ if(language==="rust")return `fn main() {\n    println!("FC-101 cleared for takeoff");\n    println!("Cruising at 35000 ft · 480 kt");\n}\n`;
+ if(language==="kotlin")return `fun main() {\n    println("FC-101 cleared for takeoff")\n    println("Cruising at 35000 ft · 480 kt")\n}\n`;
+ if(language==="ruby")return `puts "FC-101 cleared for takeoff"\nputs "Cruising at 35000 ft · 480 kt"\n`;
+ if(language==="php")return `<?php\necho "FC-101 cleared for takeoff\\n";\necho "Cruising at 35000 ft · 480 kt\\n";\n`;
+ return `print("FC-101 cleared for takeoff")\nprint("Cruising at 35000 ft · 480 kt")\n`;
 }
 
-export function FlightIDE({initialSolved}:{initialSolved:string[]}){
- const [index,setIndex]=useState(0),challenge=flightChallenges[index];
+export function FlightIDE(){
  const [language,setLanguage]=useState<JudgeLanguage>("javascript");
- const [code,setCode]=useState(()=>starterFor("javascript",0));
+ const [code,setCode]=useState(()=>starterFor("javascript"));
  const [stdin,setStdin]=useState("");
  const [result,setResult]=useState<JudgeResult|null>(null);
- const [running,setRunning]=useState(false);
- const [consoleText,setConsoleText]=useState("Judge online. Select a language and run your flight program.");
- const [solved,setSolved]=useState(new Set(initialSolved)),[filter,setFilter]=useState("");
- const [history,setHistory]=useState<HistoryItem[]>([]),[historyOpen,setHistoryOpen]=useState(false),[draftNotice,setDraftNotice]=useState("");
- const visibleChallenges=flightChallenges.filter(item=>(item.title+item.system+item.difficulty).toLowerCase().includes(filter.toLowerCase()));
- const draftKey=(slug=challenge.slug,lang=language)=>`fc_draft_${slug}_${lang}`;
+ const [flightState,setFlightState]=useState<FlightState>("standby");
+ const [notice,setNotice]=useState("COCKPIT READY");
+ const metrics=useMemo(()=>({lines:code.split("\n").length,characters:code.length}),[code]);
+ const output=result?.stdout||result?.compileOutput||result?.stderr||result?.message||"Run your program to begin the takeoff sequence.";
 
- function loadEditor(nextIndex:number,nextLanguage:JudgeLanguage){
-  const nextChallenge=flightChallenges[nextIndex];
-  const saved=localStorage.getItem(`fc_draft_${nextChallenge.slug}_${nextLanguage}`);
-  setCode(saved||starterFor(nextLanguage,nextIndex));setResult(null);
-  setDraftNotice(saved?"Recovered saved draft":"");
-  setConsoleText(`${judgeLanguages[nextLanguage].label} runtime selected. Ready to compile.`);
+ function changeLanguage(next:JudgeLanguage){
+  setLanguage(next);const saved=localStorage.getItem(`fc_playground_${next}`);
+  setCode(saved||starterFor(next));setResult(null);setFlightState("standby");setNotice(saved?"DRAFT RECOVERED":"RUNTIME READY");
  }
- function selectMission(i:number){setIndex(i);loadEditor(i,language)}
- function selectLanguage(next:JudgeLanguage){setLanguage(next);loadEditor(index,next)}
- function saveDraft(){localStorage.setItem(draftKey(),code);setDraftNotice("Draft secured on this device")}
- function reset(){setCode(starterFor(language,index));setResult(null);localStorage.removeItem(draftKey());setDraftNotice("");setConsoleText("Starter program restored.")}
- async function openHistory(){const response=await fetch("/api/lab/submissions");const data=await response.json();setHistory(data.submissions||[]);setHistoryOpen(true)}
-
- async function run(submit=false){
-  setRunning(true);setResult(null);setConsoleText(`Compiling ${judgeLanguages[language].label} in the isolated flight judge…`);
+ function save(){localStorage.setItem(`fc_playground_${language}`,code);setNotice("DRAFT SECURED")}
+ function reset(){setCode(starterFor(language));setResult(null);setFlightState("standby");setNotice("COCKPIT RESET")}
+ async function run(){
+  setFlightState("compiling");setNotice("ENGINES SPOOLING");setResult(null);
   try{
    const response=await fetch("/api/lab/execute",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language,sourceCode:code,stdin})});
-   const data=await response.json();
-   if(!response.ok)throw new Error(data.error||"Execution service unavailable");
+   const data=await response.json();if(!response.ok)throw new Error(data.error||"Execution service unavailable");
    const execution=data as JudgeResult;setResult(execution);
-   setConsoleText(execution.accepted?"PROGRAM COMPLETED — inspect stdout and runtime telemetry.":`${execution.status.toUpperCase()} — inspect compiler and runtime output.`);
-   if(submit){
-    await fetch("/api/lab/submissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({challengeSlug:challenge.slug,language,code,passed:execution.accepted,testsPassed:execution.accepted?1:0,totalTests:1,runtimeMs:execution.runtimeMs})});
-    if(execution.accepted)setSolved(current=>new Set([...current,challenge.slug]));
-   }
-  }catch(error){setConsoleText(error instanceof Error?error.message:"Execution service unavailable")}
-  finally{setRunning(false)}
+   setFlightState(execution.accepted?"airborne":"fault");setNotice(execution.accepted?"TAKEOFF COMPLETE":"SYSTEM FAULT");
+  }catch(error){setFlightState("fault");setNotice(error instanceof Error?error.message.toUpperCase():"EXECUTION SERVICE UNAVAILABLE")}
  }
 
- return <div className="flight-ide">
-  <aside className="mission-rail"><div className="rail-heading"><span>MISSION BANK</span><b>{solved.size}/{flightChallenges.length}</b></div><label className="mission-search"><span>⌕</span><input value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Filter systems" aria-label="Filter coding missions"/></label>{visibleChallenges.map(item=>{const i=flightChallenges.indexOf(item);return <button key={item.slug} className={i===index?"active":""} onClick={()=>selectMission(i)}><i>{solved.has(item.slug)?"✓":String(i+1).padStart(2,"0")}</i><span><b>{item.title}</b><small>{item.system}</small></span><em>{item.difficulty}</em></button>})}<button className="history-trigger" onClick={openHistory}><i>↺</i><span><b>Submission telemetry</b><small>Review recent attempts</small></span></button><div className="rail-signal"><i/><span>MULTI-LANGUAGE JUDGE</span><small>Isolated execution · 3s CPU</small></div></aside>
-  <section className="mission-brief"><header><span>MISSION {String(index+1).padStart(2,"0")} / {challenge.system}</span><b>{challenge.difficulty} · {challenge.xp} XP</b></header><h1>{challenge.title}</h1><p>{challenge.brief}</p><h2>Flight contract</h2><code>{challenge.contract}</code><h2>Operational constraints</h2><ul>{challenge.constraints.map(x=><li key={x}>{x}</li>)}</ul><div className="architecture-map" aria-label="System architecture"><span>SENSORS</span><i>→</i><span>FLIGHT CORE</span><i>→</i><span>ACTUATORS</span><b>REDUNDANCY BUS / LIVE</b></div></section>
-  <section className="ide-panel"><header><div><i/><i/><i/><span>{judgeLanguages[language].file} {draftNotice&&<b>· {draftNotice}</b>}</span></div><label className="language-picker"><span>Language</span><select aria-label="Programming language" value={language} onChange={event=>selectLanguage(event.target.value as JudgeLanguage)}>{languages.map(([key,item])=><option key={key} value={key}>{item.label}</option>)}</select></label><div className="ide-actions"><button onClick={saveDraft}>Save</button><button onClick={reset}>Reset</button><button onClick={()=>run(false)} disabled={running}>▶ Run</button><button className="submit-code" onClick={()=>run(true)} disabled={running}>{running?"Executing…":"Submit flight plan"}</button></div></header>
-   <div className="editor-shell monaco-flight-editor"><Editor height="100%" language={language==="cpp"?"cpp":language==="csharp"?"csharp":language} value={code} onChange={value=>{setCode(value||"");setDraftNotice("")}} theme="vs-dark" loading={<div className="editor-loading">INITIALIZING FLIGHT EDITOR…</div>} options={{fontFamily:"Manrope, Arial, sans-serif",fontSize:16,lineHeight:26,minimap:{enabled:true,scale:1},scrollBeyondLastLine:false,smoothScrolling:true,automaticLayout:true,tabSize:2,wordWrap:"off",padding:{top:18,bottom:18},renderLineHighlight:"all",cursorSmoothCaretAnimation:"on",bracketPairColorization:{enabled:true},guides:{bracketPairs:true,indentation:true},suggest:{showWords:true},quickSuggestions:true}} onMount={(editor,monaco)=>{editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.Enter,()=>run(false));editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.KeyS,()=>saveDraft())}}/></div>
-   <div className="judge-console"><header><span>EXECUTION CONSOLE · CTRL/⌘ + ENTER TO RUN</span><b>{result?`${result.runtimeMs}MS · ${result.memoryKb}KB`:"READY"}</b></header><div className="judge-io"><label><span>STANDARD INPUT</span><textarea value={stdin} onChange={e=>setStdin(e.target.value)} placeholder="Optional stdin for your program"/></label><section><span>PROGRAM OUTPUT</span><pre>{result?.stdout||result?.compileOutput||result?.stderr||result?.message||consoleText}</pre></section></div>{result&&<div className={result.accepted?"pass":"fail"}><b>{result.accepted?"DONE":"ERROR"}</b><span>{result.status}</span><small>{result.stderr||result.compileOutput||`${result.runtimeMs}ms · ${result.memoryKb}KB`}</small></div>}</div>
-  </section>
-  {historyOpen&&<div className="history-layer" role="dialog" aria-modal="true" aria-label="Submission telemetry"><section><header><div><span>FLIGHT RECORDER</span><h2>Submission telemetry</h2></div><button onClick={()=>setHistoryOpen(false)} aria-label="Close submission history">×</button></header><div className="history-list">{history.map((item,i)=><article key={`${item.created_at}-${i}`}><b className={item.passed?"passed":"failed"}>{item.passed?"PASSED":"FAILED"}</b><span><strong>{flightChallenges.find(x=>x.slug===item.challenge_slug)?.title||item.challenge_slug}</strong><small>{judgeLanguages[item.language as JudgeLanguage]?.label||item.language} · {new Date(item.created_at).toLocaleString()}</small></span><em>{item.tests_passed}/{item.total_tests} gates · {item.runtime_ms}ms</em></article>)}{!history.length&&<p>No flight programs submitted yet.</p>}</div></section></div>}
+ return <div className={`flight-playground state-${flightState}`}>
+  <aside className="sim-cockpit">
+   <div className="sim-heading"><span>F/C SIMULATION DECK</span><b><i/> LIVE</b></div>
+   <div className="sim-window" aria-label={`Flight simulation ${flightState}`}>
+    <div className="sim-sky"><span className="sim-star s1"/><span className="sim-star s2"/><span className="sim-star s3"/></div>
+    <div className="sim-horizon"><i/><i/><i/><i/><i/></div>
+    <div className="sim-runway"><span/><span/><span/><span/><span/></div>
+    <div className="sim-aircraft">✈<i/></div>
+    <div className="hud-bracket left"/><div className="hud-bracket right"/>
+    <div className="hud-status"><small>FLIGHT MODE</small><strong>{flightState.toUpperCase()}</strong></div>
+    <div className="hud-reticle"><i/><i/><span>+</span></div>
+    <div className="hud-altitude"><span>ALT</span><b>{flightState==="airborne"?"35,000":"00000"}</b><small>FT</small></div>
+    <div className="hud-speed"><span>SPD</span><b>{flightState==="airborne"?"480":"000"}</b><small>KT</small></div>
+   </div>
+   <section className="cockpit-telemetry">
+    <div><span>ENGINE</span><b>{flightState==="compiling"?"SPOOLING":flightState==="fault"?"FAULT":"NOMINAL"}</b></div>
+    <div><span>RUNTIME</span><b>{result?`${result.runtimeMs} MS`:"--"}</b></div>
+    <div><span>MEMORY</span><b>{result?`${result.memoryKb} KB`:"--"}</b></div>
+    <div><span>SOURCE</span><b>{metrics.lines} LINES</b></div>
+   </section>
+   <section className="cockpit-message"><span>MISSION CONTROL</span><b>{notice}</b><p>{flightState==="standby"?"Write anything. Test ideas. Learn by flying.":flightState==="compiling"?"Your program is compiling inside the isolated judge.":flightState==="airborne"?"Program executed successfully. Flight systems are nominal.":"Inspect the compiler or runtime output and repair the system."}</p></section>
+  </aside>
+
+  <main className="playground-workspace">
+   <header className="playground-toolbar">
+    <div className="file-identity"><span>F/C</span><div><b>{judgeLanguages[language].file}</b><small>FREE-FLIGHT PLAYGROUND</small></div></div>
+    <label className="language-picker"><span>Language</span><select aria-label="Programming language" value={language} onChange={event=>changeLanguage(event.target.value as JudgeLanguage)}>{languages.map(([key,item])=><option key={key} value={key}>{item.label}</option>)}</select></label>
+    <div className="ide-actions"><button onClick={save}>Save draft</button><button onClick={reset}>Reset</button><button className="submit-code" onClick={run} disabled={flightState==="compiling"}>{flightState==="compiling"?"Starting engines…":"▶ Run & take off"}</button></div>
+   </header>
+   <div className="editor-shell monaco-flight-editor"><Editor height="100%" language={language==="cpp"?"cpp":language==="csharp"?"csharp":language} value={code} onChange={value=>{setCode(value||"");setNotice("UNSAVED CHANGES")}} theme="vs-dark" loading={<div className="editor-loading">INITIALIZING FLIGHT EDITOR…</div>} options={{fontFamily:"Manrope, Arial, sans-serif",fontSize:16,lineHeight:26,minimap:{enabled:true,scale:1},scrollBeyondLastLine:false,smoothScrolling:true,automaticLayout:true,tabSize:2,wordWrap:"off",padding:{top:18,bottom:18},renderLineHighlight:"all",cursorSmoothCaretAnimation:"on",bracketPairColorization:{enabled:true},guides:{bracketPairs:true,indentation:true},suggest:{showWords:true},quickSuggestions:true}} onMount={(editor,monaco)=>{editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.Enter,run);editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.KeyS,save)}}/></div>
+   <section className="playground-console">
+    <header><div><i/><span>FLIGHT TERMINAL</span></div><b>{result?.status||"READY"} · {metrics.characters} CHARACTERS</b></header>
+    <div className="console-grid"><label><span>STANDARD INPUT</span><textarea value={stdin} onChange={event=>setStdin(event.target.value)} placeholder="Optional input for Scanner, stdin, cin…"/></label><section><span>PROGRAM OUTPUT</span><pre>{output}</pre></section></div>
+   </section>
+  </main>
  </div>
 }
