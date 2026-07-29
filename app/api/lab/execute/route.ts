@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentUser} from "../../../../lib/auth";
 import {executeWithJudge,isJudgeLanguage} from "../../../../lib/judge0";
+import {validateDestinationMission} from "../../../../lib/flightMission";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    return NextResponse.json(await executeWithJudge(language, sourceCode, stdin));
+    const execution=await executeWithJudge(language, sourceCode, stdin);
+    return NextResponse.json({...execution,mission:execution.accepted?validateDestinationMission(execution.stdout):{passed:false,completed:0,total:8,progress:0,nextCheckpoint:"Fix compiler or runtime errors first"}});
   } catch (error) {
     const message = error instanceof Error ? error.message : "Execution service unavailable";
     return NextResponse.json({error: message}, {status: 502});

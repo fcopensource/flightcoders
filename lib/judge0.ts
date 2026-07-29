@@ -28,6 +28,7 @@ type Judge0Response = {
   time?: string | null;
   memory?: number | null;
   status?: {id: number; description: string};
+  error?: string;
 };
 
 export async function executeWithJudge(language: JudgeLanguage, sourceCode: string, stdin: string) {
@@ -57,8 +58,11 @@ export async function executeWithJudge(language: JudgeLanguage, sourceCode: stri
 
   const result = (await response.json().catch(() => null)) as Judge0Response | null;
   if (!response.ok || !result) {
+    const details=result&&typeof result==="object"
+      ? Object.entries(result).map(([key,value])=>`${key}: ${Array.isArray(value)?value.join(", "):String(value)}`).join(" · ")
+      : "";
     throw new Error(
-      result?.message || `Execution service returned ${response.status}. Check the Judge0 environment settings.`,
+      result?.message || result?.error || details || `Execution service returned ${response.status}. Please retry in a moment.`,
     );
   }
 

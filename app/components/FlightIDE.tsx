@@ -2,12 +2,14 @@
 import {useMemo,useState} from "react";
 import Editor from "@monaco-editor/react";
 import {judgeLanguages,type JudgeLanguage} from "../../lib/judge0";
+import {destinationMission} from "../../lib/flightMission";
 
 type JudgeResult={
  accepted:boolean;status:string;stdout:string;stderr:string;compileOutput:string;
  message:string;runtimeMs:number;memoryKb:number;
+ mission:{passed:boolean;completed:number;total:number;progress:number;nextCheckpoint:string|null};
 };
-type FlightState="standby"|"compiling"|"airborne"|"fault";
+type FlightState="standby"|"compiling"|"grounded"|"taxi"|"airborne"|"destination"|"fault";
 const languages=Object.entries(judgeLanguages) as [JudgeLanguage,(typeof judgeLanguages)[JudgeLanguage]][];
 
 function starterFor(language:JudgeLanguage){
@@ -42,13 +44,20 @@ export function FlightIDE(){
  }
  function save(){localStorage.setItem(`fc_playground_${language}`,code);setNotice("DRAFT SECURED")}
  function reset(){setCode(starterFor(language));setResult(null);setFlightState("standby");setNotice("COCKPIT RESET")}
+ function animateSuccessfulMission(){
+  setFlightState("taxi");setNotice("TAXIING TO RUNWAY");
+  window.setTimeout(()=>{setFlightState("airborne");setNotice("AIRBORNE · MUMBAI BOUND")},900);
+  window.setTimeout(()=>{setFlightState("destination");setNotice("DESTINATION REACHED")},3400);
+ }
  async function run(){
   setFlightState("compiling");setNotice("ENGINES SPOOLING");setResult(null);
   try{
    const response=await fetch("/api/lab/execute",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language,sourceCode:code,stdin})});
    const data=await response.json();if(!response.ok)throw new Error(data.error||"Execution service unavailable");
    const execution=data as JudgeResult;setResult(execution);
-   setFlightState(execution.accepted?"airborne":"fault");setNotice(execution.accepted?"TAKEOFF COMPLETE":"SYSTEM FAULT");
+   if(!execution.accepted){setFlightState("fault");setNotice("SYSTEM FAULT")}
+   else if(execution.mission.passed)animateSuccessfulMission();
+   else{setFlightState("grounded");setNotice(`FLIGHT HOLD · ${execution.mission.completed}/${execution.mission.total} CHECKPOINTS`)}
   }catch(error){setFlightState("fault");setNotice(error instanceof Error?error.message.toUpperCase():"EXECUTION SERVICE UNAVAILABLE")}
  }
 
@@ -64,15 +73,15 @@ export function FlightIDE(){
     <div className="hud-status"><small>FLIGHT MODE</small><strong>{flightState.toUpperCase()}</strong></div>
     <div className="hud-reticle"><i/><i/><span>+</span></div>
     <div className="hud-altitude"><span>ALT</span><b>{flightState==="airborne"?"35,000":"00000"}</b><small>FT</small></div>
-    <div className="hud-speed"><span>SPD</span><b>{flightState==="airborne"?"480":"000"}</b><small>KT</small></div>
+    <div className="hud-speed"><span>SPD</span><b>{flightState==="airborne"?"480":flightState==="taxi"?"145":"000"}</b><small>KT</small></div>
    </div>
    <section className="cockpit-telemetry">
-    <div><span>ENGINE</span><b>{flightState==="compiling"?"SPOOLING":flightState==="fault"?"FAULT":"NOMINAL"}</b></div>
+    <div><span>ENGINE</span><b>{flightState==="compiling"?"SPOOLING":flightState==="fault"?"FAULT":flightState==="destination"?"SHUTDOWN":"NOMINAL"}</b></div>
     <div><span>RUNTIME</span><b>{result?`${result.runtimeMs} MS`:"--"}</b></div>
     <div><span>MEMORY</span><b>{result?`${result.memoryKb} KB`:"--"}</b></div>
     <div><span>SOURCE</span><b>{metrics.lines} LINES</b></div>
    </section>
-   <section className="cockpit-message"><span>MISSION CONTROL</span><b>{notice}</b><p>{flightState==="standby"?"Write anything. Test ideas. Learn by flying.":flightState==="compiling"?"Your program is compiling inside the isolated judge.":flightState==="airborne"?"Program executed successfully. Flight systems are nominal.":"Inspect the compiler or runtime output and repair the system."}</p></section>
+   <section className="cockpit-message"><span>MISSION CONTROL · {destinationMission.title}</span><b>{notice}</b><p>{destinationMission.briefing}</p><ol className="mission-checkpoints">{destinationMission.checkpoints.map((checkpoint,index)=><li key={checkpoint} className={result&&index<result.mission.completed?"complete":result&&index===result.mission.completed?"next":""}><i>{result&&index<result.mission.completed?"✓":index+1}</i><span>{checkpoint}</span></li>)}</ol>{result&&!result.mission.passed&&result.accepted&&<div className="next-command">NEXT REQUIRED OUTPUT <b>{result.mission.nextCheckpoint}</b></div>}</section>
   </aside>
 
   <main className="playground-workspace">
@@ -83,7 +92,7 @@ export function FlightIDE(){
    </header>
    <div className="editor-shell monaco-flight-editor"><Editor height="100%" language={language==="cpp"?"cpp":language==="csharp"?"csharp":language} value={code} onChange={value=>{setCode(value||"");setNotice("UNSAVED CHANGES")}} theme="vs-dark" loading={<div className="editor-loading">INITIALIZING FLIGHT EDITOR…</div>} options={{fontFamily:"Manrope, Arial, sans-serif",fontSize:16,lineHeight:26,minimap:{enabled:true,scale:1},scrollBeyondLastLine:false,smoothScrolling:true,automaticLayout:true,tabSize:2,wordWrap:"off",padding:{top:18,bottom:18},renderLineHighlight:"all",cursorSmoothCaretAnimation:"on",bracketPairColorization:{enabled:true},guides:{bracketPairs:true,indentation:true},suggest:{showWords:true},quickSuggestions:true}} onMount={(editor,monaco)=>{editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.Enter,run);editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.KeyS,save)}}/></div>
    <section className="playground-console">
-    <header><div><i/><span>FLIGHT TERMINAL</span></div><b>{result?.status||"READY"} · {metrics.characters} CHARACTERS</b></header>
+    <header><div><i/><span>FLIGHT TERMINAL</span></div><b>{result?`${result.mission.completed}/${result.mission.total} CHECKPOINTS`:"MISSION READY"} · {metrics.characters} CHARACTERS</b></header>
     <div className="console-grid"><label><span>STANDARD INPUT</span><textarea value={stdin} onChange={event=>setStdin(event.target.value)} placeholder="Optional input for Scanner, stdin, cin…"/></label><section><span>PROGRAM OUTPUT</span><pre>{output}</pre></section></div>
    </section>
   </main>
