@@ -1,30 +1,74 @@
 "use client";
 import {useMemo,useState} from "react";
 import {flightChallenges} from "../../lib/flightChallenges";
+import {judgeLanguages,type JudgeLanguage} from "../../lib/judge0";
 
-type TestResult={name:string;passed:boolean;message:string;duration:number};
-function execute(code:string,tests:{name:string;code:string}[]):Promise<TestResult[]>{
- return new Promise((resolve)=>{
-  const source=`self.onmessage=async(e)=>{const {code,tests}=e.data;const out=[];try{(0,eval)(code);for(const t of tests){const s=Date.now();try{const fn=new Function(t.code);await fn();out.push({name:t.name,passed:true,message:'Nominal',duration:Date.now()-s})}catch(x){out.push({name:t.name,passed:false,message:String(x&&x.message||x),duration:Date.now()-s})}}self.postMessage({out})}catch(x){self.postMessage({error:String(x&&x.message||x)})}}`;
-  const worker=new Worker(URL.createObjectURL(new Blob([source],{type:"text/javascript"}))); const timer=setTimeout(()=>{worker.terminate();resolve(tests.map(t=>({name:t.name,passed:false,message:"Execution exceeded 2000ms",duration:2000})))},2000);
-  worker.onmessage=(event)=>{clearTimeout(timer);worker.terminate();resolve(event.data.out||tests.map(t=>({name:t.name,passed:false,message:event.data.error||"Runtime fault",duration:0})))};
-  worker.postMessage({code,tests});
- });
+type JudgeResult={
+ accepted:boolean;status:string;stdout:string;stderr:string;compileOutput:string;
+ message:string;runtimeMs:number;memoryKb:number;
+};
+type HistoryItem={challenge_slug:string;language:string;passed:number;tests_passed:number;total_tests:number;runtime_ms:number;created_at:string};
+
+const languages=Object.entries(judgeLanguages) as [JudgeLanguage,(typeof judgeLanguages)[JudgeLanguage]][];
+
+function starterFor(language:JudgeLanguage,index:number){
+ const challenge=flightChallenges[index];
+ if(language==="javascript")return `${challenge.starter}\n\n// Standard input is available through the FlightCoders judge harness.\nconsole.log("Flight program ready");\n`;
+ if(language==="python")return `# ${challenge.title}\n# Read input, implement the flight contract, then print the result.\nimport sys\n\ndef solve(data: str):\n    # TODO: implement mission logic\n    return "Flight program ready"\n\nif __name__ == "__main__":\n    print(solve(sys.stdin.read()))\n`;
+ if(language==="cpp")return `// ${challenge.title}\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    // TODO: parse stdin and implement the flight contract.\n    string line;\n    while (getline(cin, line)) { /* ingest telemetry */ }\n    cout << "Flight program ready" << '\\n';\n    return 0;\n}\n`;
+ return `// ${challenge.title}\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));\n        // TODO: parse stdin and implement the flight contract.\n        while (input.readLine() != null) { /* ingest telemetry */ }\n        System.out.println("Flight program ready");\n    }\n}\n`;
 }
+
 export function FlightIDE({initialSolved}:{initialSolved:string[]}){
- const [index,setIndex]=useState(0), challenge=flightChallenges[index];
- const [code,setCode]=useState(challenge.starter),[results,setResults]=useState<TestResult[]>([]),[running,setRunning]=useState(false),[consoleText,setConsoleText]=useState("Awaiting flight program…"),[solved,setSolved]=useState(new Set(initialSolved)),[filter,setFilter]=useState("");
- const [history,setHistory]=useState<Array<{challenge_slug:string;passed:number;tests_passed:number;total_tests:number;runtime_ms:number;created_at:string}>>([]),[historyOpen,setHistoryOpen]=useState(false),[draftNotice,setDraftNotice]=useState("");
+ const [index,setIndex]=useState(0),challenge=flightChallenges[index];
+ const [language,setLanguage]=useState<JudgeLanguage>("javascript");
+ const [code,setCode]=useState(()=>starterFor("javascript",0));
+ const [stdin,setStdin]=useState("");
+ const [result,setResult]=useState<JudgeResult|null>(null);
+ const [running,setRunning]=useState(false);
+ const [consoleText,setConsoleText]=useState("Judge online. Select a language and run your flight program.");
+ const [solved,setSolved]=useState(new Set(initialSolved)),[filter,setFilter]=useState("");
+ const [history,setHistory]=useState<HistoryItem[]>([]),[historyOpen,setHistoryOpen]=useState(false),[draftNotice,setDraftNotice]=useState("");
  const lines=useMemo(()=>code.split("\n").length,[code]);
  const visibleChallenges=flightChallenges.filter(item=>(item.title+item.system+item.difficulty).toLowerCase().includes(filter.toLowerCase()));
- function selectMission(i:number){setIndex(i);const saved=localStorage.getItem(`fc_draft_${flightChallenges[i].slug}`);setCode(saved||flightChallenges[i].starter);setResults([]);setDraftNotice(saved?"Recovered saved draft":"");setConsoleText("Mission loaded. Complete the flight program, then run validation.")}
- function saveDraft(){localStorage.setItem(`fc_draft_${challenge.slug}`,code);setDraftNotice("Draft secured on this device");}
+ const draftKey=(slug=challenge.slug,lang=language)=>`fc_draft_${slug}_${lang}`;
+
+ function loadEditor(nextIndex:number,nextLanguage:JudgeLanguage){
+  const nextChallenge=flightChallenges[nextIndex];
+  const saved=localStorage.getItem(`fc_draft_${nextChallenge.slug}_${nextLanguage}`);
+  setCode(saved||starterFor(nextLanguage,nextIndex));setResult(null);
+  setDraftNotice(saved?"Recovered saved draft":"");
+  setConsoleText(`${judgeLanguages[nextLanguage].label} runtime selected. Ready to compile.`);
+ }
+ function selectMission(i:number){setIndex(i);loadEditor(i,language)}
+ function selectLanguage(next:JudgeLanguage){setLanguage(next);loadEditor(index,next)}
+ function saveDraft(){localStorage.setItem(draftKey(),code);setDraftNotice("Draft secured on this device")}
+ function reset(){setCode(starterFor(language,index));setResult(null);localStorage.removeItem(draftKey());setDraftNotice("");setConsoleText("Starter program restored.")}
  async function openHistory(){const response=await fetch("/api/lab/submissions");const data=await response.json();setHistory(data.submissions||[]);setHistoryOpen(true)}
- async function run(submit=false){setRunning(true);setConsoleText("Compiling isolated flight program…");const r=await execute(code,challenge.tests);setResults(r);const passed=r.every(x=>x.passed);setConsoleText(passed?"ALL SYSTEMS NOMINAL — every validation gate passed.":"VALIDATION ABORTED — inspect failed systems below.");setRunning(false);if(submit){await fetch("/api/lab/submissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({challengeSlug:challenge.slug,language:"javascript",code,passed,testsPassed:r.filter(x=>x.passed).length,totalTests:r.length,runtimeMs:r.reduce((n,x)=>n+x.duration,0)})});if(passed)setSolved(s=>new Set([...s,challenge.slug]));}}
+
+ async function run(submit=false){
+  setRunning(true);setResult(null);setConsoleText(`Compiling ${judgeLanguages[language].label} in the isolated flight judge…`);
+  try{
+   const response=await fetch("/api/lab/execute",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language,sourceCode:code,stdin})});
+   const data=await response.json();
+   if(!response.ok)throw new Error(data.error||"Execution service unavailable");
+   const execution=data as JudgeResult;setResult(execution);
+   setConsoleText(execution.accepted?"PROGRAM COMPLETED — inspect stdout and runtime telemetry.":`${execution.status.toUpperCase()} — inspect compiler and runtime output.`);
+   if(submit){
+    await fetch("/api/lab/submissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({challengeSlug:challenge.slug,language,code,passed:execution.accepted,testsPassed:execution.accepted?1:0,totalTests:1,runtimeMs:execution.runtimeMs})});
+    if(execution.accepted)setSolved(current=>new Set([...current,challenge.slug]));
+   }
+  }catch(error){setConsoleText(error instanceof Error?error.message:"Execution service unavailable")}
+  finally{setRunning(false)}
+ }
+
  return <div className="flight-ide">
-  <aside className="mission-rail"><div className="rail-heading"><span>MISSION BANK</span><b>{solved.size}/{flightChallenges.length}</b></div><label className="mission-search"><span>⌕</span><input value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Filter systems" aria-label="Filter coding missions"/></label>{visibleChallenges.map(item=>{const i=flightChallenges.indexOf(item);return <button key={item.slug} className={i===index?"active":""} onClick={()=>selectMission(i)}><i>{solved.has(item.slug)?"✓":String(i+1).padStart(2,"0")}</i><span><b>{item.title}</b><small>{item.system}</small></span><em>{item.difficulty}</em></button>})}<button className="history-trigger" onClick={openHistory}><i>↺</i><span><b>Submission telemetry</b><small>Review recent attempts</small></span></button><div className="rail-signal"><i/><span>JUDGE ONLINE</span><small>Browser-isolated · 2s limit</small></div></aside>
+  <aside className="mission-rail"><div className="rail-heading"><span>MISSION BANK</span><b>{solved.size}/{flightChallenges.length}</b></div><label className="mission-search"><span>⌕</span><input value={filter} onChange={e=>setFilter(e.target.value)} placeholder="Filter systems" aria-label="Filter coding missions"/></label>{visibleChallenges.map(item=>{const i=flightChallenges.indexOf(item);return <button key={item.slug} className={i===index?"active":""} onClick={()=>selectMission(i)}><i>{solved.has(item.slug)?"✓":String(i+1).padStart(2,"0")}</i><span><b>{item.title}</b><small>{item.system}</small></span><em>{item.difficulty}</em></button>})}<button className="history-trigger" onClick={openHistory}><i>↺</i><span><b>Submission telemetry</b><small>Review recent attempts</small></span></button><div className="rail-signal"><i/><span>MULTI-LANGUAGE JUDGE</span><small>Isolated execution · 3s CPU</small></div></aside>
   <section className="mission-brief"><header><span>MISSION {String(index+1).padStart(2,"0")} / {challenge.system}</span><b>{challenge.difficulty} · {challenge.xp} XP</b></header><h1>{challenge.title}</h1><p>{challenge.brief}</p><h2>Flight contract</h2><code>{challenge.contract}</code><h2>Operational constraints</h2><ul>{challenge.constraints.map(x=><li key={x}>{x}</li>)}</ul><div className="architecture-map" aria-label="System architecture"><span>SENSORS</span><i>→</i><span>FLIGHT CORE</span><i>→</i><span>ACTUATORS</span><b>REDUNDANCY BUS / LIVE</b></div></section>
-  <section className="ide-panel"><header><div><i/><i/><i/><span>flight_solution.js {draftNotice&&<b>· {draftNotice}</b>}</span></div><nav><button className="active">JavaScript</button><button disabled title="Coming soon">Python</button><button disabled title="Coming soon">C++</button></nav><div className="ide-actions"><button onClick={saveDraft}>Save</button><button onClick={()=>{setCode(challenge.starter);setResults([]);localStorage.removeItem(`fc_draft_${challenge.slug}`)}}>Reset</button><button onClick={()=>run(false)} disabled={running}>▶ Run</button><button className="submit-code" onClick={()=>run(true)} disabled={running}>{running?"Validating…":"Submit flight plan"}</button></div></header><div className="editor-shell"><pre aria-hidden>{Array.from({length:lines},(_,i)=><span key={i}>{i+1}</span>)}</pre><textarea spellCheck={false} aria-label="Flight code editor" value={code} onChange={e=>{setCode(e.target.value);setDraftNotice("")}} onKeyDown={e=>{if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();run(false)}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();saveDraft()}}}/></div><div className="judge-console"><header><span>VALIDATION CONSOLE · CTRL/⌘ + ENTER TO RUN</span><b>{results.filter(x=>x.passed).length}/{results.length||challenge.tests.length} GATES</b></header><p>{consoleText}</p>{results.map(r=><div key={r.name} className={r.passed?"pass":"fail"}><b>{r.passed?"PASS":"FAIL"}</b><span>{r.name}</span><small>{r.message} · {r.duration}ms</small></div>)}</div></section>
-  {historyOpen&&<div className="history-layer" role="dialog" aria-modal="true" aria-label="Submission telemetry"><section><header><div><span>FLIGHT RECORDER</span><h2>Submission telemetry</h2></div><button onClick={()=>setHistoryOpen(false)} aria-label="Close submission history">×</button></header><div className="history-list">{history.map((item,i)=><article key={`${item.created_at}-${i}`}><b className={item.passed?"passed":"failed"}>{item.passed?"PASSED":"FAILED"}</b><span><strong>{flightChallenges.find(x=>x.slug===item.challenge_slug)?.title||item.challenge_slug}</strong><small>{new Date(item.created_at).toLocaleString()}</small></span><em>{item.tests_passed}/{item.total_tests} gates · {item.runtime_ms}ms</em></article>)}{!history.length&&<p>No flight programs submitted yet.</p>}</div></section></div>}
+  <section className="ide-panel"><header><div><i/><i/><i/><span>{judgeLanguages[language].file} {draftNotice&&<b>· {draftNotice}</b>}</span></div><nav aria-label="Programming language">{languages.map(([key,item])=><button key={key} className={language===key?"active":""} onClick={()=>selectLanguage(key)}>{item.label}</button>)}</nav><div className="ide-actions"><button onClick={saveDraft}>Save</button><button onClick={reset}>Reset</button><button onClick={()=>run(false)} disabled={running}>▶ Run</button><button className="submit-code" onClick={()=>run(true)} disabled={running}>{running?"Executing…":"Submit flight plan"}</button></div></header>
+   <div className="editor-shell"><pre aria-hidden>{Array.from({length:lines},(_,i)=><span key={i}>{i+1}</span>)}</pre><textarea spellCheck={false} aria-label={`${judgeLanguages[language].label} code editor`} value={code} onChange={e=>{setCode(e.target.value);setDraftNotice("")}} onKeyDown={e=>{if(e.key==="Tab"){e.preventDefault();const target=e.currentTarget,start=target.selectionStart,end=target.selectionEnd;setCode(code.slice(0,start)+"  "+code.slice(end));requestAnimationFrame(()=>{target.selectionStart=target.selectionEnd=start+2})}if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();run(false)}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();saveDraft()}}}/></div>
+   <div className="judge-console"><header><span>EXECUTION CONSOLE · CTRL/⌘ + ENTER TO RUN</span><b>{result?`${result.runtimeMs}MS · ${result.memoryKb}KB`:"READY"}</b></header><div className="judge-io"><label><span>STANDARD INPUT</span><textarea value={stdin} onChange={e=>setStdin(e.target.value)} placeholder="Optional stdin for your program"/></label><section><span>PROGRAM OUTPUT</span><pre>{result?.stdout||result?.compileOutput||result?.stderr||result?.message||consoleText}</pre></section></div>{result&&<div className={result.accepted?"pass":"fail"}><b>{result.accepted?"DONE":"ERROR"}</b><span>{result.status}</span><small>{result.stderr||result.compileOutput||`${result.runtimeMs}ms · ${result.memoryKb}KB`}</small></div>}</div>
+  </section>
+  {historyOpen&&<div className="history-layer" role="dialog" aria-modal="true" aria-label="Submission telemetry"><section><header><div><span>FLIGHT RECORDER</span><h2>Submission telemetry</h2></div><button onClick={()=>setHistoryOpen(false)} aria-label="Close submission history">×</button></header><div className="history-list">{history.map((item,i)=><article key={`${item.created_at}-${i}`}><b className={item.passed?"passed":"failed"}>{item.passed?"PASSED":"FAILED"}</b><span><strong>{flightChallenges.find(x=>x.slug===item.challenge_slug)?.title||item.challenge_slug}</strong><small>{judgeLanguages[item.language as JudgeLanguage]?.label||item.language} · {new Date(item.created_at).toLocaleString()}</small></span><em>{item.tests_passed}/{item.total_tests} gates · {item.runtime_ms}ms</em></article>)}{!history.length&&<p>No flight programs submitted yet.</p>}</div></section></div>}
  </div>
 }

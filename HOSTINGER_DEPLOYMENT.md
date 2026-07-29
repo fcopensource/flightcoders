@@ -151,8 +151,9 @@ These endpoints require a logged-in account whose email appears in `ADMIN_EMAILS
 
 ## Member experience included
 
-- Three persistent interface themes: Runway, Midnight, and Aurora.
 - Global command navigation with `Ctrl/Command + K`.
-- Flight Operations Lab with browser-isolated JavaScript execution and persistent submission telemetry.
+- Flight Operations Lab with isolated JavaScript, Python, C++, and Java execution through Judge0.
+- Add `JUDGE0_API_URL`; when using RapidAPI, also add `JUDGE0_API_KEY` and `JUDGE0_API_HOST`.
+- Compiler errors, standard input/output, runtime and memory telemetry, and persistent submission history.
 - Per-mission drafts saved on the member's own device; `Ctrl/Command + S` saves and `Ctrl/Command + Enter` runs validation.
 - Advanced aircraft-system missions, searchable mission bank, dashboard launchpad, AI mentor, profiles, progress, projects, jobs, and technical publishing.
