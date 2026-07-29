@@ -35,6 +35,7 @@ export function FlightIDE(){
  const [result,setResult]=useState<JudgeResult|null>(null);
  const [flightState,setFlightState]=useState<FlightState>("standby");
  const [notice,setNotice]=useState("COCKPIT READY");
+ const [nightVision,setNightVision]=useState(false);
  const metrics=useMemo(()=>({lines:code.split("\n").length,characters:code.length}),[code]);
  const output=result?.stdout||result?.compileOutput||result?.stderr||result?.message||"Run your program to begin the takeoff sequence.";
 
@@ -61,19 +62,33 @@ export function FlightIDE(){
   }catch(error){setFlightState("fault");setNotice(error instanceof Error?error.message.toUpperCase():"EXECUTION SERVICE UNAVAILABLE")}
  }
 
- return <div className={`flight-playground state-${flightState}`}>
+ const systemLogs=flightState==="compiling"
+  ?["HANDSHAKE JUDGE0","ALLOCATING SANDBOX","COMPILING SOURCE","AWAITING TELEMETRY"]
+  :flightState==="fault"
+   ?["FAULT INTERRUPT","EXECUTION ABORTED","AIRCRAFT GROUNDED","DIAGNOSTICS READY"]
+   :flightState==="destination"
+    ?["MUMBAI TOWER LOCKED","RUNWAY 27 CAPTURED","TOUCHDOWN VERIFIED","MISSION ARCHIVED"]
+    :flightState==="airborne"
+     ?["NAV VECTOR LOCKED","AUTOPILOT ENGAGED","DATA LINK STABLE","DESTINATION TRACKING"]
+     :["AVIONICS BUS ONLINE","NAV DATABASE LOADED","CONTROL SURFACES READY","AWAITING SOURCE CODE"];
+
+ return <div className={`flight-playground state-${flightState} ${nightVision?"vision-green":""}`}>
   <aside className="sim-cockpit">
-   <div className="sim-heading"><span>F/C SIMULATION DECK</span><b><i/> LIVE</b></div>
+   <div className="sim-heading"><span>F/C HARDWARE SIMULATION DECK</span><div><button onClick={()=>setNightVision(value=>!value)}>{nightVision?"NORMAL HUD":"NVG MODE"}</button><b><i/> LIVE</b></div></div>
    <div className="sim-window" aria-label={`Flight simulation ${flightState}`}>
+    <div className="hud-scanlines"/><div className="radar-sweep"/>
     <div className="sim-sky"><span className="sim-star s1"/><span className="sim-star s2"/><span className="sim-star s3"/></div>
     <div className="sim-horizon"><i/><i/><i/><i/><i/></div>
     <div className="sim-runway"><span/><span/><span/><span/><span/></div>
-    <div className="sim-aircraft">✈<i/></div>
+    <div className="sim-aircraft"><svg viewBox="0 0 120 120" aria-hidden="true"><path d="M60 3c5 0 8 7 9 17l3 25 35 24c4 3 6 7 6 11v7L72 73l-2 25 14 10v7l-24-5-24 5v-7l14-10-2-25L7 87v-7c0-4 2-8 6-11l35-24 3-25C52 10 55 3 60 3Z"/></svg><i/><b/></div>
     <div className="hud-bracket left"/><div className="hud-bracket right"/>
     <div className="hud-status"><small>FLIGHT MODE</small><strong>{flightState.toUpperCase()}</strong></div>
     <div className="hud-reticle"><i/><i/><span>+</span></div>
     <div className="hud-altitude"><span>ALT</span><b>{flightState==="airborne"?"35,000":"00000"}</b><small>FT</small></div>
     <div className="hud-speed"><span>SPD</span><b>{flightState==="airborne"?"480":flightState==="taxi"?"145":"000"}</b><small>KT</small></div>
+    <div className="hardware-readout left"><span>BUS_A 28.4V</span><span>FCC_1 ONLINE</span><span>HYD 3000 PSI</span></div>
+    <div className="hardware-readout right"><span>GPS SAT 12</span><span>NAV LOCK 98%</span><span>LINK 5.8 GHZ</span></div>
+    <div className="route-vector">{destinationMission.checkpoints.slice(1,7).map((checkpoint,index)=><span key={checkpoint} className={result&&index<Math.max(0,result.mission.completed-1)?"complete":""}><i/>{["DEL","JAI","AMD","BOM","APP","RWY"][index]}</span>)}</div>
    </div>
    <section className="cockpit-telemetry">
     <div><span>ENGINE</span><b>{flightState==="compiling"?"SPOOLING":flightState==="fault"?"FAULT":flightState==="destination"?"SHUTDOWN":"NOMINAL"}</b></div>
@@ -82,6 +97,7 @@ export function FlightIDE(){
     <div><span>SOURCE</span><b>{metrics.lines} LINES</b></div>
    </section>
    <section className="cockpit-message"><span>MISSION CONTROL · {destinationMission.title}</span><b>{notice}</b><p>{destinationMission.briefing}</p><ol className="mission-checkpoints">{destinationMission.checkpoints.map((checkpoint,index)=><li key={checkpoint} className={result&&index<result.mission.completed?"complete":result&&index===result.mission.completed?"next":""}><i>{result&&index<result.mission.completed?"✓":index+1}</i><span>{checkpoint}</span></li>)}</ol>{result&&!result.mission.passed&&result.accepted&&<div className="next-command">NEXT REQUIRED OUTPUT <b>{result.mission.nextCheckpoint}</b></div>}</section>
+   <section className="hardware-terminal"><header><span>AVIONICS KERNEL</span><b>TTY-07</b></header>{systemLogs.map((log,index)=><div key={log} style={{animationDelay:`${index*110}ms`}}><i>{index===systemLogs.length-1?"›":"✓"}</i><span>{log}</span><em>{index===systemLogs.length-1&&flightState==="compiling"?"RUNNING":"OK"}</em></div>)}</section>
   </aside>
 
   <main className="playground-workspace">
@@ -90,6 +106,7 @@ export function FlightIDE(){
     <label className="language-picker"><span>Language</span><select aria-label="Programming language" value={language} onChange={event=>changeLanguage(event.target.value as JudgeLanguage)}>{languages.map(([key,item])=><option key={key} value={key}>{item.label}</option>)}</select></label>
     <div className="ide-actions"><button onClick={save}>Save draft</button><button onClick={reset}>Reset</button><button className="submit-code" onClick={run} disabled={flightState==="compiling"}>{flightState==="compiling"?"Starting engines…":"▶ Run & take off"}</button></div>
    </header>
+   <div className="workspace-hardware"><span><i/> SECURE SANDBOX</span><span>CPU {flightState==="compiling"?"87":"21"}%</span><span>CORE TEMP {flightState==="compiling"?"68":"39"}°C</span><span>PACKETS {result?result.mission.completed*128:0}</span><b>ENCRYPTED LINK</b></div>
    <div className="editor-shell monaco-flight-editor"><Editor height="100%" language={language==="cpp"?"cpp":language==="csharp"?"csharp":language} value={code} onChange={value=>{setCode(value||"");setNotice("UNSAVED CHANGES")}} theme="vs-dark" loading={<div className="editor-loading">INITIALIZING FLIGHT EDITOR…</div>} options={{fontFamily:"Manrope, Arial, sans-serif",fontSize:16,lineHeight:26,minimap:{enabled:true,scale:1},scrollBeyondLastLine:false,smoothScrolling:true,automaticLayout:true,tabSize:2,wordWrap:"off",padding:{top:18,bottom:18},renderLineHighlight:"all",cursorSmoothCaretAnimation:"on",bracketPairColorization:{enabled:true},guides:{bracketPairs:true,indentation:true},suggest:{showWords:true},quickSuggestions:true}} onMount={(editor,monaco)=>{editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.Enter,run);editor.addCommand(monaco.KeyMod.CtrlCmd|monaco.KeyCode.KeyS,save)}}/></div>
    <section className="playground-console">
     <header><div><i/><span>FLIGHT TERMINAL</span></div><b>{result?`${result.mission.completed}/${result.mission.total} CHECKPOINTS`:"MISSION READY"} · {metrics.characters} CHARACTERS</b></header>
