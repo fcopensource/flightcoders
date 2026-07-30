@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentUser} from "../../../../lib/auth";
 import {executeWithJudge,isJudgeLanguage} from "../../../../lib/judge0";
-import {validateDestinationMission} from "../../../../lib/flightMission";
+import {validateRadarMission} from "../../../../lib/flightMission";
 
 export const runtime = "nodejs";
 
@@ -20,13 +20,18 @@ export async function POST(request: Request) {
   if (!sourceCode.trim() || sourceCode.length > 50000) {
     return NextResponse.json({error: "Code must be between 1 and 50,000 characters"}, {status: 400});
   }
-  if (stdin.length > 10000) {
-    return NextResponse.json({error: "Standard input cannot exceed 10,000 characters"}, {status: 400});
+  if (!stdin.trim() || stdin.length > 50000) {
+    return NextResponse.json({error: "Mission input must be between 1 and 50,000 characters"}, {status: 400});
   }
 
   try {
     const execution=await executeWithJudge(language, sourceCode, stdin);
-    return NextResponse.json({...execution,mission:execution.accepted?validateDestinationMission(execution.stdout):{passed:false,completed:0,total:8,progress:0,nextCheckpoint:"Fix compiler or runtime errors first"}});
+    return NextResponse.json({
+      ...execution,
+      mission:execution.accepted
+        ? validateRadarMission(execution.stdout,stdin)
+        : {passed:false,completed:0,total:1,progress:0,nextCheckpoint:"Fix compiler or runtime errors first"},
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Execution service unavailable";
     return NextResponse.json({error: message}, {status: 502});
