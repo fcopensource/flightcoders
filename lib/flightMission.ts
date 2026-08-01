@@ -20,7 +20,7 @@ export const radarMission = {
     "COUNT x1 y1 x2 y2",
     "NEAREST x y",
   ],
-  defaultInput: `14
+  defaultInput: `17
 ADD AI101 0 0
 ADD AI202 8 3
 ADD AI303 -4 7
@@ -34,14 +34,20 @@ ADD AI505 5 6
 NEAREST 5 2
 DEL AI101
 COUNT -10 -10 10 10
-NEAREST -3 8`,
+NEAREST -3 8
+COUNT -100 -100 100 100
+NEAREST 100 100
+COUNT 6 6 -6 -6`,
   sampleOutput: `3
 AI202
 AI101
 1
 AI404
 3
-AI303`,
+AI303
+3
+AI505
+3`,
   detailedSolution: `FULL SOLUTION — SQRT-DECOMPOSED DYNAMIC SPATIAL INDEX
 
 1. Why a normal k-d tree is not enough
