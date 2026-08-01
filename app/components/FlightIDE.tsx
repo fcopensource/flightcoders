@@ -31,7 +31,7 @@ function starterFor(language:JudgeLanguage){
 export function FlightIDE(){
  const [language,setLanguage]=useState<JudgeLanguage>("javascript");
  const [code,setCode]=useState(()=>starterFor("javascript"));
- const [stdin,setStdin]=useState(radarMission.defaultInput);
+ const [stdin,setStdin]=useState<string>(radarMission.defaultInput);
  const [result,setResult]=useState<JudgeResult|null>(null);
  const [flightState,setFlightState]=useState<FlightState>("standby");
  const [notice,setNotice]=useState("RADAR INCIDENT ACTIVE");
