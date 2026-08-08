@@ -1,13 +1,13 @@
 const tracks = [
-  { number: "01", title: "Flight Systems", text: "Model navigation, telemetry, and the software behind modern aircraft.", meta: "12 modules · Intermediate" },
-  { number: "02", title: "Drone Autonomy", text: "Build perception and control loops that take an autonomous vehicle airborne.", meta: "9 modules · Advanced" },
-  { number: "03", title: "Aviation Data", text: "Turn real flight data into reliable decisions with Python and modern tooling.", meta: "8 modules · Beginner" },
+  { number: "01", title: "Coding Foundations", text: "Strengthen programming fundamentals through guided challenges and practical projects.", meta: "12 modules · Beginner" },
+  { number: "02", title: "Data Structures & Algorithms", text: "Advance from core patterns to confident problem solving with structured practice.", meta: "9 modules · Intermediate" },
+  { number: "03", title: "Software Engineering Projects", text: "Apply your skills in portfolio-ready projects using modern developer tools.", meta: "8 modules · Advanced" },
 ];
 
 const features = [
-  ["⌁", "Learn by shipping", "Every path ends in a working flight-tech project, not another forgotten certificate."],
-  ["↗", "Built with experts", "Curriculum shaped by aerospace engineers, pilots, and developers in the field."],
-  ["◎", "Find your crew", "Get feedback, pair with peers, and meet builders who speak your language."],
+  ["⌁", "Learn by building", "Every flight level turns concepts into working code and portfolio-ready projects."],
+  ["↗", "Progress with purpose", "A structured path helps computer science and engineering students know what to learn next."],
+  ["◎", "Practice with feedback", "Solve focused challenges, test your code, and learn from a community of builders."],
 ];
 
 interface HomePost extends RowDataPacket { slug:string; title:string; excerpt:string; category:string; published_at:Date }
@@ -16,6 +16,13 @@ interface HomeProject extends RowDataPacket { slug:string; name:string; tagline:
 // Keep the homepage HTML tied to the current build. Long-lived CDN caching can
 // otherwise leave visitors with an old HTML document that references deleted
 // hashed CSS assets after a deployment.
+export const metadata: Metadata = {
+  title: "FlightCoders | Coding Practice for CS & Engineering Students",
+  description:
+    "Level up your coding skills through structured challenges and practical projects for computer science and engineering students.",
+  alternates: { canonical: "/" },
+};
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -34,8 +41,8 @@ export default async function Home() {
         <div className="eyebrow"><span className="pulse" /> Enrollment open · Cohort 04</div>
         <div className="hero-grid">
           <div className="hero-copy">
-            <h1>Where code<br />learns to <em>fly.</em></h1>
-            <p>Learn programming by building aviation software. Write, compile, and test real code for flight systems, drones, autonomy, telemetry, and safety-critical engineering.</p>
+            <h1>Level up your<br />coding <em>skills.</em></h1>
+            <p>Advance through structured flight levels built for computer science and engineering students. Practice real coding, complete projects, and build skills you can prove.</p>
             <div className="hero-actions"><a className="button" href="#tracks">Explore learning tracks <span>↗</span></a><a className="text-link" href="#method">See how it works <span>↓</span></a></div>
           </div>
           <div className="flight-card" aria-label="Flight code example">
@@ -45,7 +52,7 @@ export default async function Home() {
             <div className="telemetry"><span><small>ALTITUDE</small>12,400 <b>FT</b></span><span><small>AIRSPEED</small>268 <b>KT</b></span><span><small>HEADING</small>074 <b>°</b></span></div>
           </div>
         </div>
-        <div className="trusted"><span>THE CODING PLATFORM FOR</span><b>AVIATION SOFTWARE</b><b>DRONE AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
+        <div className="trusted"><span>THE CODING PLATFORM FOR</span><b>COMPUTER SCIENCE</b><b>ENGINEERING STUDENTS</b><b>CODING PRACTICE</b><b>REAL PROJECTS</b></div>
       </section>
 
       <CodeLab/>
@@ -53,7 +60,7 @@ export default async function Home() {
       <section className="dark-section" id="method">
         <div className="shell">
           <div className="section-kicker">// WHY FLIGHTCODERS</div>
-          <div className="section-heading"><h2>Not another coding course.<br /><em>A runway.</em></h2><p>We connect software fundamentals to the machines and missions that make them matter.</p></div>
+          <div className="section-heading"><h2>Not another coding course.<br /><em>A flight plan.</em></h2><p>Follow a clear progression from fundamentals to practical developer skills, one flight level at a time.</p></div>
           <div className="feature-grid">
             {features.map(([icon,title,text], i) => <article className="feature" key={title}><span className="feature-no">0{i+1}</span><div className="feature-icon">{icon}</div><h3>{title}</h3><p>{text}</p></article>)}
           </div>
@@ -61,7 +68,7 @@ export default async function Home() {
       </section>
 
       <section className="tracks shell" id="tracks">
-        <div className="section-kicker dark">// CHOOSE YOUR FLIGHT PATH</div>
+        <div className="section-kicker dark">// CHOOSE YOUR CODING FLIGHT PATH</div>
         <div className="section-heading light"><h2>Start where<br />curiosity takes you.</h2><p>Focused learning tracks. Practical challenges. A portfolio that proves you can build.</p></div>
         <div className="track-list">
           {tracks.map(track => <a className="track" href="/tracks" key={track.number}><span className="track-no">{track.number}</span><div><h3>{track.title}</h3><p>{track.text}</p></div><span className="track-meta">{track.meta}</span><span className="track-arrow">↗</span></a>)}
@@ -69,9 +76,9 @@ export default async function Home() {
       </section>
 
       <section className="engineering-proof">
-        <div className="shell proof-head"><div><span>// ENGINEERING, NOT EDUTAINMENT</span><h2>Train against<br/><em>production reality.</em></h2></div><p>FlightCoders brings software engineering rigor to high-consequence systems: observable code, measurable performance, deliberate failure handling, and projects that survive review.</p></div>
+        <div className="shell proof-head"><div><span>// PRACTICE, NOT PASSIVE WATCHING</span><h2>Build skills through<br/><em>real code.</em></h2></div><p>FlightCoders helps CS and engineering learners progress through hands-on challenges, measurable outcomes, deliberate debugging, and projects that stand up to review.</p></div>
         <div className="shell proof-stats"><article><strong>24+</strong><span>BUILD SYSTEMS<br/>IN THE LAB</span></article><article><strong>600+</strong><span>GLOBAL<br/>DEVELOPERS</span></article><article><strong>18</strong><span>EXPERT-LED<br/>REVIEWS</span></article><article><strong>92%</strong><span>SHIP A<br/>CAPSTONE</span></article></div>
-        <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> ROS 2 <i/> PX4 <i/> MAVLINK <i/> C++ <i/> POSTGRESQL <i/> COMPUTER VISION <i/> CONTROL SYSTEMS <i/> DIGITAL TWINS</div></div>
+        <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> JAVASCRIPT <i/> C++ <i/> SQL <i/> DATA STRUCTURES <i/> ALGORITHMS <i/> GIT <i/> DEBUGGING <i/> SOFTWARE PROJECTS</div></div>
       </section>
 
       <section className="home-projects shell">
@@ -86,8 +93,8 @@ export default async function Home() {
       <section className="community" id="community">
         <div className="shell community-grid">
           <div className="quote-mark">“</div>
-          <blockquote>FlightCoders gave me the bridge between loving aviation and actually building for it. Three months later, I shipped my first telemetry dashboard.</blockquote>
-          <div className="person"><span className="avatar">AK</span><span><b>Arjun Kapoor</b><small>Cohort 02 · Avionics developer</small></span></div>
+          <blockquote>FlightCoders gave me a clear path from learning concepts to building working projects. I always knew which skill to tackle next.</blockquote>
+          <div className="person"><span className="avatar">AK</span><span><b>Arjun Kapoor</b><small>Cohort 02 · Engineering student</small></span></div>
           <div className="community-stat"><strong>600+</strong><span>builders<br />worldwide</span></div>
         </div>
       </section>
@@ -99,6 +106,7 @@ export default async function Home() {
     </main>
   );
 }
+import type { Metadata } from "next";
 import type { RowDataPacket } from "mysql2";
 import Link from "next/link";
 import { getDb } from "../lib/db";
