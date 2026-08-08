@@ -70,6 +70,19 @@ export default async function Home() {
       <section className="tracks shell" id="tracks">
         <div className="section-kicker dark">// CHOOSE YOUR CODING FLIGHT PATH</div>
         <div className="section-heading light"><h2>Start where<br />curiosity takes you.</h2><p>Focused learning tracks. Practical challenges. A portfolio that proves you can build.</p></div>
+        <div className="flight-level-route" aria-hidden="true">
+          <div className="route-labels"><span>LEVEL 01 · FOUNDATIONS</span><span>LEVEL 02 · PROBLEM SOLVING</span><span>LEVEL 03 · BUILD & SHIP</span></div>
+          <svg viewBox="0 0 1000 130" role="presentation" focusable="false">
+            <path className="level-route-shadow" d="M18 104 C210 104 206 35 390 35 S620 108 782 66 S904 28 982 28" />
+            <path className="level-route-line" d="M18 104 C210 104 206 35 390 35 S620 108 782 66 S904 28 982 28" />
+            <circle cx="18" cy="104" r="7" />
+            <circle cx="390" cy="35" r="7" />
+            <circle cx="782" cy="66" r="7" />
+            <g className="route-plane" transform="translate(777 51) rotate(-14)">
+              <path d="M2 15 34 2l-9 13 16 7-4 5-18-4-8 11-5-2 4-13-8-4Z" />
+            </g>
+          </svg>
+        </div>
         <div className="track-list">
           {tracks.map(track => <a className="track" href="/tracks" key={track.number}><span className="track-no">{track.number}</span><div><h3>{track.title}</h3><p>{track.text}</p></div><span className="track-meta">{track.meta}</span><span className="track-arrow">↗</span></a>)}
         </div>
@@ -77,6 +90,10 @@ export default async function Home() {
 
       <section className="engineering-proof">
         <div className="shell proof-head"><div><span>// PRACTICE, NOT PASSIVE WATCHING</span><h2>Build skills through<br/><em>real code.</em></h2></div><p>FlightCoders helps CS and engineering learners progress through hands-on challenges, measurable outcomes, deliberate debugging, and projects that stand up to review.</p></div>
+        <div className="skill-altimeter" aria-hidden="true">
+          <span><i />FOUNDATIONS</span><span><i />PRACTICE</span><span><i />PROJECTS</span><span><i />SHIP</span>
+          <b>FLIGHT LEVEL <strong>04</strong></b>
+        </div>
         <div className="shell proof-stats"><article><strong>24+</strong><span>BUILD SYSTEMS<br/>IN THE LAB</span></article><article><strong>600+</strong><span>GLOBAL<br/>DEVELOPERS</span></article><article><strong>18</strong><span>EXPERT-LED<br/>REVIEWS</span></article><article><strong>92%</strong><span>SHIP A<br/>CAPSTONE</span></article></div>
         <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> JAVASCRIPT <i/> C++ <i/> SQL <i/> DATA STRUCTURES <i/> ALGORITHMS <i/> GIT <i/> DEBUGGING <i/> SOFTWARE PROJECTS</div></div>
       </section>
