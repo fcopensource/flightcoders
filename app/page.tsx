@@ -1,118 +1,107 @@
-import Link from "next/link";
-import { SiteHeader } from "./components/SiteHeader";
-import { SiteFooter } from "./components/SiteFooter";
-
-const projects = [
-  { tag:"AI / SaaS", title:"Build an AI support agent for a B2B dashboard", budget:"$2.5k–$4k", time:"2–3 weeks", stack:["Next.js","Python","OpenAI"] },
-  { tag:"Mobile", title:"Ship a production-ready marketplace app", budget:"$4k–$7k", time:"4–6 weeks", stack:["React Native","Node.js","Postgres"] },
-  { tag:"Automation", title:"Automate lead qualification + CRM workflows", budget:"$1.5k–$3k", time:"1–2 weeks", stack:["Salesforce","APIs","AI"] },
+const tracks = [
+  { number: "01", title: "Flight Systems", text: "Model navigation, telemetry, and the software behind modern aircraft.", meta: "12 modules · Intermediate" },
+  { number: "02", title: "Drone Autonomy", text: "Build perception and control loops that take an autonomous vehicle airborne.", meta: "9 modules · Advanced" },
+  { number: "03", title: "Aviation Data", text: "Turn real flight data into reliable decisions with Python and modern tooling.", meta: "8 modules · Beginner" },
 ];
 
-const steps = [
-  ["01","Post the mission","Tell us what you need, your timeline, stack preferences, and budget."],
-  ["02","Meet the right crew","FlightCoders matches the project with developers who have relevant shipping experience."],
-  ["03","Build in public","Milestones, reviews, communication, and delivery stay visible from kickoff to launch."],
+const features = [
+  ["⌁", "Learn by shipping", "Every path ends in a working flight-tech project, not another forgotten certificate."],
+  ["↗", "Built with experts", "Curriculum shaped by aerospace engineers, pilots, and developers in the field."],
+  ["◎", "Find your crew", "Get feedback, pair with peers, and meet builders who speak your language."],
 ];
 
-const skills = ["AI Engineering","Full-stack","Mobile","Salesforce","Cloud","Data","DevOps","Automation","UI Engineering"];
+interface HomePost extends RowDataPacket { slug:string; title:string; excerpt:string; category:string; published_at:Date }
+interface HomeProject extends RowDataPacket { slug:string; name:string; tagline:string; technologies:string; accent_color:string }
 
+// Keep the homepage HTML tied to the current build. Long-lived CDN caching can
+// otherwise leave visitors with an old HTML document that references deleted
+// hashed CSS assets after a deployment.
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-export default function Home() {
+export default async function Home() {
+  const db=getDb();
+  const [[posts],[projects]]=await Promise.all([
+    db.execute<HomePost[]>("SELECT slug,title,excerpt,category,published_at FROM blog_posts WHERE published=TRUE ORDER BY published_at DESC,id DESC LIMIT 3"),
+    db.execute<HomeProject[]>("SELECT slug,name,tagline,technologies,accent_color FROM projects WHERE featured=TRUE ORDER BY launched_at DESC,id DESC LIMIT 2"),
+  ]);
   return (
-    <main className="fc-home">
+    <main>
       <SiteHeader />
 
-      <section className="fc-hero shell">
-        <div className="fc-grid-noise" aria-hidden="true" />
-        <div className="fc-hero-copy">
-          <div className="fc-badge"><span /> Developer network is open</div>
-          <h1>Great software gets built by the <em>right crew.</em></h1>
-          <p>FlightCoders is a developer community where companies bring real projects and proven builders team up to design, build, and ship them.</p>
-          <div className="fc-actions">
-            <Link className="fc-primary" href="/register">Post a project <span>↗</span></Link>
-            <Link className="fc-secondary" href="/projects">Find projects <span>→</span></Link>
+      <section className="hero shell" id="top">
+        <div className="hero-atmosphere" aria-hidden="true"><span className="flight-arc arc-one"><i>✦</i></span><span className="flight-arc arc-two"/><span className="hero-coordinate">37.7749° N / 122.4194° W</span></div>
+        <div className="eyebrow"><span className="pulse" /> Enrollment open · Cohort 04</div>
+        <div className="hero-grid">
+          <div className="hero-copy">
+            <h1>Where code<br />learns to <em>fly.</em></h1>
+            <p>Learn programming by building aviation software. Write, compile, and test real code for flight systems, drones, autonomy, telemetry, and safety-critical engineering.</p>
+            <div className="hero-actions"><a className="button" href="#tracks">Explore learning tracks <span>↗</span></a><a className="text-link" href="#method">See how it works <span>↓</span></a></div>
           </div>
-          <div className="fc-proof">
-            <div><strong>600+</strong><span>developers</span></div>
-            <div><strong>24+</strong><span>skill domains</span></div>
-            <div><strong>Global</strong><span>remote delivery</span></div>
+          <div className="flight-card" aria-label="Flight code example">
+            <div className="card-top"><span><i className="dot red" /><i className="dot amber" /><i className="dot green" /></span><span>autopilot.py</span><span>•••</span></div>
+            <pre><code><span className="muted">01</span>  <span className="pink">class</span> <span className="blue">FlightController</span>:<br /><span className="muted">02</span>    <span className="pink">def</span> <span className="blue">navigate</span>(self, waypoint):<br /><span className="muted">03</span>      heading = self.<span className="yellow">calculate</span>(waypoint)<br /><span className="muted">04</span>      self.autopilot.<span className="yellow">engage</span>(heading)<br /><span className="muted">05</span><br /><span className="muted">06</span>  craft = <span className="blue">FlightController</span>(<span className="green-text">"FC-04"</span>)<br /><span className="muted">07</span>  craft.<span className="yellow">navigate</span>(<span className="green-text">"37.7749° N"</span>)<br /><span className="muted">08</span>  <span className="comment"># ready for takeoff_</span></code></pre>
+            <div className="radar"><span className="radar-ring r1"/><span className="radar-ring r2"/><span className="radar-cross horizontal"/><span className="radar-cross vertical"/><span className="plane">✦</span></div>
+            <div className="telemetry"><span><small>ALTITUDE</small>12,400 <b>FT</b></span><span><small>AIRSPEED</small>268 <b>KT</b></span><span><small>HEADING</small>074 <b>°</b></span></div>
           </div>
         </div>
-
-        <div className="fc-command">
-          <div className="fc-command-top"><span>LIVE PROJECT FEED</span><i>● ONLINE</i></div>
-          <div className="fc-terminal-line"><small>CLIENT REQUEST</small><b>Need a senior full-stack team for an AI analytics product.</b></div>
-          <div className="fc-match-row"><span>01</span><div><b>Backend Architect</b><small>Python · FastAPI · PostgreSQL</small></div><strong>98% MATCH</strong></div>
-          <div className="fc-match-row"><span>02</span><div><b>AI Engineer</b><small>LLMs · RAG · Evaluations</small></div><strong>96% MATCH</strong></div>
-          <div className="fc-match-row"><span>03</span><div><b>Frontend Engineer</b><small>Next.js · TypeScript · Design systems</small></div><strong>94% MATCH</strong></div>
-          <div className="fc-command-foot"><span>CREW ASSEMBLED</span><b>Ready for kickoff →</b></div>
-        </div>
+        <div className="trusted"><span>THE CODING PLATFORM FOR</span><b>AVIATION SOFTWARE</b><b>DRONE AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
       </section>
 
-      <section className="fc-ticker">
-        <div>{skills.concat(skills).map((skill,i)=><span key={i}>{skill}<i>✦</i></span>)}</div>
-      </section>
+      <CodeLab/>
 
-      <section className="fc-projects shell" id="projects">
-        <div className="fc-section-head">
-          <div><span className="fc-kicker">// PROJECT MARKETPLACE</span><h2>Real work.<br/>Real budgets.<br/><em>Real shipping.</em></h2></div>
-          <p>No tutorial projects and no endless bidding race. Clients post meaningful work; developers join projects where their skills actually fit.</p>
-        </div>
-        <div className="fc-project-grid">
-          {projects.map((project,index)=>(
-            <article className="fc-project-card" key={project.title}>
-              <div className="fc-project-top"><span>0{index+1}</span><b>{project.tag}</b></div>
-              <h3>{project.title}</h3>
-              <div className="fc-project-meta"><span><small>BUDGET</small>{project.budget}</span><span><small>DELIVERY</small>{project.time}</span></div>
-              <div className="fc-tags">{project.stack.map(x=><i key={x}>{x}</i>)}</div>
-              <Link href="/projects">View mission <span>↗</span></Link>
-            </article>
-          ))}
-        </div>
-        <div className="fc-project-cta"><span>Have something that needs to be built?</span><Link href="/register">Post your project →</Link></div>
-      </section>
-
-      <section className="fc-how">
+      <section className="dark-section" id="method">
         <div className="shell">
-          <div className="fc-section-head fc-light">
-            <div><span className="fc-kicker">// HOW FLIGHTCODERS WORKS</span><h2>From brief to<br/><em>production.</em></h2></div>
-            <p>A focused workflow for serious client work: strong scoping, the right engineering crew, transparent milestones, and accountable delivery.</p>
-          </div>
-          <div className="fc-steps">
-            {steps.map(([n,title,text])=><article key={n}><span>{n}</span><h3>{title}</h3><p>{text}</p></article>)}
+          <div className="section-kicker">// WHY FLIGHTCODERS</div>
+          <div className="section-heading"><h2>Not another coding course.<br /><em>A runway.</em></h2><p>We connect software fundamentals to the machines and missions that make them matter.</p></div>
+          <div className="feature-grid">
+            {features.map(([icon,title,text], i) => <article className="feature" key={title}><span className="feature-no">0{i+1}</span><div className="feature-icon">{icon}</div><h3>{title}</h3><p>{text}</p></article>)}
           </div>
         </div>
       </section>
 
-      <section className="fc-community shell">
-        <div className="fc-community-copy">
-          <span className="fc-kicker">// BUILT FOR DEVELOPERS</span>
-          <h2>Your network should create <em>opportunity.</em></h2>
-          <p>Build a reputation around shipped work, not follower counts. Meet developers across stacks, join high-quality teams, learn from production code, and grow through real client outcomes.</p>
-          <div className="fc-checks"><span>✓ Verified developer profiles</span><span>✓ Project-based collaboration</span><span>✓ Peer code review & mentorship</span><span>✓ Portfolio-worthy delivery</span></div>
-          <Link className="fc-primary dark" href="/community">Explore the community <span>↗</span></Link>
-        </div>
-        <div className="fc-network-card">
-          <div className="fc-network-head"><span>FLIGHTCODERS NETWORK</span><b>LIVE</b></div>
-          <div className="fc-orbit">
-            <span className="fc-node n1">AI</span><span className="fc-node n2">BE</span><span className="fc-node n3">FE</span><span className="fc-node n4">UX</span><span className="fc-node n5">DO</span>
-            <div className="fc-core">F/C<small>CREW</small></div>
-          </div>
-          <div className="fc-network-stats"><span><b>42</b> online now</span><span><b>18</b> active missions</span></div>
+      <section className="tracks shell" id="tracks">
+        <div className="section-kicker dark">// CHOOSE YOUR FLIGHT PATH</div>
+        <div className="section-heading light"><h2>Start where<br />curiosity takes you.</h2><p>Focused learning tracks. Practical challenges. A portfolio that proves you can build.</p></div>
+        <div className="track-list">
+          {tracks.map(track => <a className="track" href="/tracks" key={track.number}><span className="track-no">{track.number}</span><div><h3>{track.title}</h3><p>{track.text}</p></div><span className="track-meta">{track.meta}</span><span className="track-arrow">↗</span></a>)}
         </div>
       </section>
 
-      <section className="fc-client-cta">
-        <div className="shell">
-          <span className="fc-kicker">// BUILD WITH FLIGHTCODERS</span>
-          <h2>You bring the problem.<br/><em>We bring the crew.</em></h2>
-          <p>From MVPs to production systems, assemble engineers who can move from idea to deployment without the agency overhead.</p>
-          <div className="fc-actions center"><Link className="fc-primary white" href="/register">Start a project <span>↗</span></Link><Link className="fc-secondary light" href="/about">How we work <span>→</span></Link></div>
+      <section className="engineering-proof">
+        <div className="shell proof-head"><div><span>// ENGINEERING, NOT EDUTAINMENT</span><h2>Train against<br/><em>production reality.</em></h2></div><p>FlightCoders brings software engineering rigor to high-consequence systems: observable code, measurable performance, deliberate failure handling, and projects that survive review.</p></div>
+        <div className="shell proof-stats"><article><strong>24+</strong><span>BUILD SYSTEMS<br/>IN THE LAB</span></article><article><strong>600+</strong><span>GLOBAL<br/>DEVELOPERS</span></article><article><strong>18</strong><span>EXPERT-LED<br/>REVIEWS</span></article><article><strong>92%</strong><span>SHIP A<br/>CAPSTONE</span></article></div>
+        <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> ROS 2 <i/> PX4 <i/> MAVLINK <i/> C++ <i/> POSTGRESQL <i/> COMPUTER VISION <i/> CONTROL SYSTEMS <i/> DIGITAL TWINS</div></div>
+      </section>
+
+      <section className="home-projects shell">
+        <div className="home-section-intro"><span>// SHIPPED BY FLIGHTCODERS</span><h2>We teach builders.<br/>We build, too.</h2><Link href="/projects">Explore all products ↗</Link></div>
+        <div className="home-project-grid">{projects.map((project,index)=><Link href={`/projects/${project.slug}`} className="home-project" key={project.slug} style={{"--project-accent":project.accent_color} as React.CSSProperties}><span>0{index+1} / LIVE PRODUCT</span><div className="home-project-mark">{project.name.slice(0,1)}</div><h3>{project.name}</h3><p>{project.tagline}</p><div>{project.technologies.split(",").slice(0,4).map(item=><b key={item}>{item.trim()}</b>)}</div><strong>View case study ↗</strong></Link>)}</div>
+      </section>
+
+      <section className="home-notes">
+        <div className="shell home-notes-inner"><div className="home-section-intro"><span>// LATEST FLIGHT NOTES</span><h2>Engineering signals<br/>worth keeping.</h2><Link href="/blog">Browse the technical library ↗</Link></div><div className="home-note-list">{posts.map((post,index)=><article key={post.slug}><span>{String(index+1).padStart(2,"0")}</span><div><small>{post.category} · {new Date(post.published_at).toLocaleDateString("en",{month:"short",day:"2-digit"})}</small><h3>{post.title}</h3><p>{post.excerpt}</p></div><Link href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>↗</Link></article>)}</div></div>
+      </section>
+
+      <section className="community" id="community">
+        <div className="shell community-grid">
+          <div className="quote-mark">“</div>
+          <blockquote>FlightCoders gave me the bridge between loving aviation and actually building for it. Three months later, I shipped my first telemetry dashboard.</blockquote>
+          <div className="person"><span className="avatar">AK</span><span><b>Arjun Kapoor</b><small>Cohort 02 · Avionics developer</small></span></div>
+          <div className="community-stat"><strong>600+</strong><span>builders<br />worldwide</span></div>
         </div>
       </section>
 
+      <section className="cta" id="join">
+        <div className="shell cta-inner"><span className="orbit one"/><span className="orbit two"/><div className="section-kicker">// YOUR NEXT MISSION</div><h2>Ready for<br /><em>takeoff?</em></h2><p>Join Cohort 04. Applications close August 24.</p><a className="button white" href="/register">Apply to FlightCoders <span>↗</span></a></div>
+      </section>
       <SiteFooter />
     </main>
   );
 }
+import type { RowDataPacket } from "mysql2";
+import Link from "next/link";
+import { getDb } from "../lib/db";
+import { SiteHeader } from "./components/SiteHeader";
+import { SiteFooter } from "./components/SiteFooter";
+import { CodeLab } from "./components/CodeLab";
