@@ -1,19 +1,27 @@
 import type { MetadataRoute } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com";
-  const updated = new Date("2026-07-12");
-  return [
-    { url: base, lastModified: updated, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/tracks`, lastModified: updated, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/community`, lastModified: updated, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/about`, lastModified: updated, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/blog`, lastModified: updated, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/projects`, lastModified: updated, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${base}/jobs`, lastModified: updated, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/register`, lastModified: updated, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/login`, lastModified: updated, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/privacy`, lastModified: updated, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/terms`, lastModified: updated, changeFrequency: "yearly", priority: 0.3 },
+  const routes: Array<{
+    path: string;
+    changeFrequency: "weekly" | "monthly" | "yearly";
+    priority: number;
+  }> = [
+    { path: "", changeFrequency: "weekly", priority: 1 },
+    { path: "/tracks", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/community", changeFrequency: "weekly", priority: 0.8 },
+    { path: "/blog", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/projects", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/about", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/jobs", changeFrequency: "weekly", priority: 0.7 },
+    { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
+    { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
   ];
+
+  return routes.map(({ path, changeFrequency, priority }) => ({
+    url: `${siteUrl}${path}`,
+    changeFrequency,
+    priority,
+  }));
 }
