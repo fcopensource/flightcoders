@@ -1,1 +1,0 @@
-export default function Loading(){return <div className="flight-loader" role="status" aria-label="Loading FlightCoders"><div className="loader-sky"><span className="loader-plane">✈</span><i/><i/><i/></div><div className="loader-terminal"><span>&gt; boot flightcoders</span><span>&gt; compiling flight path...</span><b>READY_FOR_TAKEOFF_</b></div></div>}

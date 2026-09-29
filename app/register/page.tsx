@@ -1,9 +1,42 @@
 import Link from "next/link";
-import { SiteHeader } from "../components/SiteHeader";
-import { SiteFooter } from "../components/SiteFooter";
-import { GitHubAuthButton } from "../components/GitHubAuthButton";
+import styles from "../auth.module.css";
 
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export const metadata = { title: "Register" };
+
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string; sent?: string; email?: string }> }) {
   const params = await searchParams;
-  return <main><SiteHeader/><section className="auth-shell shell"><div className="auth-aside"><div className="section-kicker dark">// START YOUR MISSION</div><h1>Your code.<br/><em>New altitude.</em></h1><p>Create your private FlightCoders account, choose a first track, and enter a global crew serious about flight technology.</p><div className="cohort-meter"><div><b>COHORT 04</b><span>84% reserved</span></div><i><span/></i><small>Applications close August 24</small></div></div><form className="auth-card register-card" action="/api/auth/register" method="post"><span className="auth-code">JOIN / FC-04</span><h2>Create your account</h2><p>One account. Your projects, progress, crew, and AI mentor.</p>{params.error && <div className="form-error" role="alert">{params.error}</div>}<GitHubAuthButton label="Create account with GitHub"/><div className="auth-divider"><span/>OR REGISTER WITH EMAIL<span/></div><div className="register-fields"><label>Full name<input name="name" autoComplete="name" placeholder="Your name" required maxLength={80}/></label><label>Email address<input type="email" name="email" autoComplete="email" placeholder="pilot@example.com" required maxLength={190}/></label><label>Password<input type="password" name="password" autoComplete="new-password" placeholder="8+ characters" required minLength={8} maxLength={72}/></label><label>Confirm password<input type="password" name="confirmPassword" autoComplete="new-password" placeholder="Repeat password" required minLength={8} maxLength={72}/></label><label>Current role<select name="role" defaultValue=""><option value="">Choose a role</option><option>Student</option><option>Software engineer</option><option>Aerospace engineer</option><option>Data scientist</option><option>Founder</option><option>Other</option></select></label><label>First flight path<select name="track" defaultValue=""><option value="">Choose a track</option><option>Flight Systems</option><option>Drone Autonomy</option><option>Aviation Data</option><option>Safety Engineering</option></select></label></div><small className="password-rule">Use uppercase, lowercase, a number, and at least 8 characters.</small><label className="terms-check"><input type="checkbox" name="terms" required/><span>I agree to the <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.</span></label><button className="auth-button auth-submit" type="submit"><span className="auth-brand-mark">F/C</span> Create my account <b>↗</b></button><p className="auth-switch">Already a member? <Link href="/login">Log in</Link></p></form></section><SiteFooter/></main>;
+  return (
+    <main className={styles.page}>
+      <Link href="/" className={styles.back}><span className={styles.mark}>FC</span> FlightCoders</Link>
+      <section className={styles.visual}>
+        <div className={styles.kicker}>JOIN FLIGHTCODERS / 01</div>
+        <h1>Make something.<br /><span>Finish it.</span></h1>
+        <p>Create your account and get ready for the next FlightCoders build sprint.</p>
+        <div className={styles.note}><span>NO PASSIVE LEARNING</span><span>BUILD IN PUBLIC</span></div>
+      </section>
+      <section className={styles.formSide}>
+        <form className={styles.form} action="/api/auth/register" method="post">
+          <span className={styles.code}>AUTH / REGISTER</span>
+          <h2>Create account</h2>
+          <p className={styles.intro}>One account for upcoming FlightCoders challenges.</p>
+          {params.sent && <div className={styles.message}>Account created. Check {params.email || "your email"} for the verification link.</div>}
+          {params.error && <div className={styles.error}>{params.error}</div>}
+          <Link className={styles.github} href="/api/auth/github?next=%2F"><span className={styles.gh}>GH</span><b>Continue with GitHub</b><span>↗</span></Link>
+          <div className={styles.divider}>OR REGISTER WITH EMAIL</div>
+          <div className={styles.fields}>
+            <label className={styles.label}>Full name<input name="name" autoComplete="name" placeholder="Your name" required maxLength={80} /></label>
+            <label className={styles.label}>Email<input type="email" name="email" autoComplete="email" placeholder="you@example.com" required maxLength={190} /></label>
+            <label className={styles.label}>Password<input type="password" name="password" autoComplete="new-password" placeholder="8+ characters" required minLength={8} maxLength={72} /></label>
+            <label className={styles.label}>Confirm password<input type="password" name="confirmPassword" autoComplete="new-password" placeholder="Repeat password" required minLength={8} maxLength={72} /></label>
+          </div>
+          <input type="hidden" name="role" value="Developer" />
+          <input type="hidden" name="track" value="Build Sprint" />
+          <small className={styles.rule}>Use uppercase, lowercase, a number, and at least 8 characters.</small>
+          <label className={styles.check}><input type="checkbox" name="terms" required /><span>I agree to create a FlightCoders account and receive essential account emails.</span></label>
+          <button className={styles.submit} type="submit">Create account ↗</button>
+          <p className={styles.switch}>Already have an account? <Link href="/login">Sign in</Link></p>
+        </form>
+      </section>
+    </main>
+  );
 }

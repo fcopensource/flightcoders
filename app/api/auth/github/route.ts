@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 
 function appOrigin(request:Request){return (process.env.APP_URL||process.env.NEXT_PUBLIC_APP_URL||new URL(request.url).origin).replace(/\/+$/,"")}
-function safeNext(value:string|null){return value?.startsWith("/")&&!value.startsWith("//")?value:"/dashboard"}
+function safeNext(value:string|null){return value?.startsWith("/")&&!value.startsWith("//")?value:"/"}
 
 export async function GET(request:Request){
   const clientId=process.env.GITHUB_CLIENT_ID?.trim();

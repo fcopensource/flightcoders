@@ -1,11 +1,35 @@
 import Link from "next/link";
-import { SiteHeader } from "../components/SiteHeader";
-import { SiteFooter } from "../components/SiteFooter";
-import { GitHubAuthButton } from "../components/GitHubAuthButton";
+import styles from "../auth.module.css";
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string; verified?: string }> }) {
+export const metadata = { title: "Login" };
+
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; verified?: string }> }) {
   const params = await searchParams;
-  const next = params.next?.startsWith("/") && !params.next.startsWith("//") ? params.next : "/dashboard";
-
-  return <main><SiteHeader/><section className="auth-shell shell"><div className="auth-aside"><div className="section-kicker dark">// MEMBER ACCESS</div><h1>Welcome<br/><em>back, pilot.</em></h1><p>Return to your dashboard, continue your current track, and see what your crew shipped while you were away.</p><div className="flight-login-visual" aria-hidden="true"><span className="login-route"/><span className="login-plane">✈</span><code>session.authenticate()<br/>clearance: GRANTED</code></div></div><form className="auth-card" action="/api/auth/login" method="post"><span className="auth-code">AUTH / FC-01</span><h2>Log in to FlightCoders</h2><p>Use your private FlightCoders account to continue.</p>{params.verified && <div className="form-success" role="status"><strong>✓ Email verified successfully</strong><span>Your FlightCoders account has been activated. You can now log in.</span></div>}{params.error && <div className="form-error" role="alert">{params.error}</div>}<GitHubAuthButton next={next}/><div className="auth-divider"><span/>OR USE EMAIL<span/></div><input type="hidden" name="next" value={next}/><label>Email address<input type="email" name="email" autoComplete="email" placeholder="pilot@example.com" required/></label><label>Password<input type="password" name="password" autoComplete="current-password" placeholder="Enter your password" required/></label><button className="auth-button auth-submit" type="submit"><span className="auth-brand-mark">F/C</span> Log in securely <b>↗</b></button><p className="verification-link"><Link href="/verify-email">Resend email verification</Link></p><div className="auth-divider"><span/>FLIGHTCODERS SECURE ACCESS<span/></div><ul><li>✓ Verified member identity</li><li>✓ Secure HTTP-only session</li><li>✓ 30-day automatic expiry</li></ul><small className="auth-legal">By logging in, you agree to our <Link href="/terms">Terms</Link> and acknowledge our <Link href="/privacy">Privacy Policy</Link>.</small><p className="auth-switch">New to FlightCoders? <Link href="/register">Create an account</Link></p></form></section><SiteFooter/></main>;
+  return (
+    <main className={styles.page}>
+      <Link href="/" className={styles.back}><span className={styles.mark}>FC</span> FlightCoders</Link>
+      <section className={styles.visual}>
+        <div className={styles.kicker}>MEMBER ACCESS / 01</div>
+        <h1>Welcome back.<br /><span>Keep building.</span></h1>
+        <p>Your account is the doorway. The work is what matters.</p>
+        <div className={styles.note}><span>BUILD → SHIP → REPEAT</span><span>FC / 2026</span></div>
+      </section>
+      <section className={styles.formSide}>
+        <form className={styles.form} action="/api/auth/login" method="post">
+          <span className={styles.code}>AUTH / LOGIN</span>
+          <h2>Sign in</h2>
+          <p className={styles.intro}>Use your FlightCoders account to continue.</p>
+          {params.verified && <div className={styles.message}>Email verified. You can sign in now.</div>}
+          {params.error && <div className={styles.error}>{params.error}</div>}
+          <Link className={styles.github} href="/api/auth/github?next=%2F"><span className={styles.gh}>GH</span><b>Continue with GitHub</b><span>↗</span></Link>
+          <div className={styles.divider}>OR USE EMAIL</div>
+          <input type="hidden" name="next" value="/" />
+          <label className={[styles.label, styles.full].join(" ")}>Email address<input type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
+          <label className={[styles.label, styles.full].join(" ")} style={{ marginTop: 14 }}>Password<input type="password" name="password" autoComplete="current-password" placeholder="Your password" required /></label>
+          <button className={styles.submit} type="submit" style={{ marginTop: 20 }}>Sign in ↗</button>
+          <p className={styles.switch}>New here? <Link href="/register">Create an account</Link></p>
+        </form>
+      </section>
+    </main>
+  );
 }

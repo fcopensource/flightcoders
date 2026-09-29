@@ -48,7 +48,7 @@ function getPublicOrigin(request: Request): string {
 
 function getSafeDestination(value: string): string {
   if (!value.startsWith("/") || value.startsWith("//")) {
-    return "/dashboard";
+    return "/";
   }
 
   return value;
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     const password = String(form.get("password") ?? "");
 
     const destination = getSafeDestination(
-      String(form.get("next") ?? "/dashboard")
+      String(form.get("next") ?? "/")
     );
 
     if (!email || !password) {

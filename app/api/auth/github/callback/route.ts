@@ -15,7 +15,7 @@ export async function GET(request:Request){
   const url=new URL(request.url),code=url.searchParams.get("code")||"",state=url.searchParams.get("state")||"";
   const cookie=request.headers.get("cookie")||"";
   const stateCookie=decodeURIComponent(cookie.match(/(?:^|; )fc_github_state=([^;]+)/)?.[1]||"");
-  const nextCookie=decodeURIComponent(cookie.match(/(?:^|; )fc_github_next=([^;]+)/)?.[1]||"/dashboard");
+  const nextCookie=decodeURIComponent(cookie.match(/(?:^|; )fc_github_next=([^;]+)/)?.[1]||"/");
   if(!code||!state||!stateCookie||!same(state,stateCookie))return fail(request,"GitHub sign-in expired or was cancelled. Please try again.");
   const clientId=process.env.GITHUB_CLIENT_ID?.trim(),clientSecret=process.env.GITHUB_CLIENT_SECRET?.trim();
   if(!clientId||!clientSecret)return fail(request,"GitHub sign-in is not configured.");
@@ -43,7 +43,7 @@ export async function GET(request:Request){
       await connection.execute("UPDATE users SET email_verified_at=COALESCE(email_verified_at,NOW()) WHERE id=?",[userId]);
       await connection.execute("UPDATE social_accounts SET provider_username=?,avatar_url=? WHERE provider='github' AND provider_user_id=?",[github.login,github.avatar_url,String(github.id)]);
       const token=await createSession(userId,connection);await connection.commit();
-      const destination=nextCookie.startsWith("/")&&!nextCookie.startsWith("//")?nextCookie:"/dashboard";const response=NextResponse.redirect(new URL(destination,origin(request)),303);response.cookies.set(sessionCookie(token));response.cookies.set("fc_github_state","",{path:"/",maxAge:0});response.cookies.set("fc_github_next","",{path:"/",maxAge:0});return response;
+      const destination=nextCookie.startsWith("/")&&!nextCookie.startsWith("//")?nextCookie:"/";const response=NextResponse.redirect(new URL(destination,origin(request)),303);response.cookies.set(sessionCookie(token));response.cookies.set("fc_github_state","",{path:"/",maxAge:0});response.cookies.set("fc_github_next","",{path:"/",maxAge:0});return response;
     }catch(error){await connection.rollback();throw error}finally{connection.release()}
   }catch(error){console.error("GitHub OAuth error:",error);return fail(request,error instanceof Error&&error.message.includes("verified GitHub email")?error.message:"GitHub sign-in failed. Please try again.")}
 }

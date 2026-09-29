@@ -155,7 +155,7 @@ export async function POST(request: Request) {
     }
 
     const destination = new URL(
-      `/verify-email?sent=1&email=${encodeURIComponent(email)}`,
+      `/register?sent=1&email=${encodeURIComponent(email)}`,
       getPublicOrigin(request)
     );
 
