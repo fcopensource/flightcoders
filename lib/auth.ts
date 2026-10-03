@@ -42,7 +42,7 @@ export async function getCurrentUser() {
   return rows[0] ?? null;
 }
 
-export async function requireUser(returnTo = "/dashboard") {
+export async function requireUser(returnTo = "/profile") {
   const user = await getCurrentUser();
   if (!user) redirect(`/login?next=${encodeURIComponent(returnTo)}`);
   return user;

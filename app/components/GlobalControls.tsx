@@ -4,7 +4,7 @@ import {useEffect,useState} from "react";
 
 const destinations=[
  {href:"/flight-lab",code:"LAB",title:"Open Flight Operations Lab",hint:"Run advanced aircraft-system code"},
- {href:"/dashboard",code:"DECK",title:"Mission dashboard",hint:"Progress, AI mentor, and telemetry"},
+ {href:"/profile",code:"DECK",title:"Your profile",hint:"Your bio and social links"},
  {href:"/tracks",code:"PATH",title:"Learning tracks",hint:"Flight systems, autonomy, and data"},
  {href:"/projects",code:"SHIP",title:"FlightCoders projects",hint:"Production case studies"},
  {href:"/blog",code:"NOTE",title:"Engineering library",hint:"Deep technical flight notes"},
