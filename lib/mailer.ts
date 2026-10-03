@@ -16,8 +16,8 @@ export async function sendVerificationEmail(input: { email:string; name:string; 
   const transporter = nodemailer.createTransport({ host:config.host, port:config.port, secure:config.secure, auth:{ user:config.user, pass:config.pass } });
   await transporter.sendMail({
     from: process.env.SMTP_FROM || `FlightCoders <${config.user}>`, to:input.email,
-    subject:"Verify your FlightCoders account",
-    text:`Hi ${input.name}, verify your FlightCoders account: ${verificationUrl} This link expires in 24 hours.`,
-    html:`<div style="font-family:Arial,sans-serif;background:#f5f3ed;padding:32px;color:#101727"><div style="max-width:600px;margin:auto;background:white;padding:36px;border:1px solid #d7d9dc"><b style="color:#3159f5">FLIGHTCODERS / EMAIL CLEARANCE</b><h1 style="font-size:36px">Verify your flight deck access.</h1><p>Hi ${input.name}, confirm your email to activate your account and enter the dashboard.</p><p><a href="${verificationUrl}" style="display:inline-block;background:#3159f5;color:white;padding:15px 22px;text-decoration:none;font-weight:bold">Verify email →</a></p><p style="color:#687381;font-size:13px">This secure link expires in 24 hours. If you did not create this account, ignore this email.</p></div></div>`
+    subject:"Verify your FlightCoders builder profile",
+    text:`Hi ${input.name}, verify your FlightCoders builder profile: ${verificationUrl} This link expires in 24 hours.`,
+    html:`<div style="font-family:Arial,sans-serif;background:#0b0b0d;padding:32px;color:#0b0b0d"><div style="max-width:600px;margin:auto;background:#f1f0e9;padding:38px;border:1px solid #c9ff3d"><b style="color:#6847ef">FLIGHTCODERS / BUILDER IDENTITY</b><h1 style="font-size:38px;line-height:1.05">One click from the network.</h1><p>Hi ${input.name}, confirm your email to activate your builder profile and enter FlightCoders.</p><p><a href="${verificationUrl}" style="display:inline-block;background:#c9ff3d;color:#0b0b0d;border:1px solid #0b0b0d;padding:15px 22px;text-decoration:none;font-weight:bold">Verify email →</a></p><p style="color:#68665f;font-size:13px">This secure link expires in 24 hours. If you did not create this profile, ignore this email.</p></div></div>`
   });
 }

@@ -1,107 +1,40 @@
-const tracks = [
-  { number: "01", title: "Flight Systems", text: "Model navigation, telemetry, and the software behind modern aircraft.", meta: "12 modules · Intermediate" },
-  { number: "02", title: "Drone Autonomy", text: "Build perception and control loops that take an autonomous vehicle airborne.", meta: "9 modules · Advanced" },
-  { number: "03", title: "Aviation Data", text: "Turn real flight data into reliable decisions with Python and modern tooling.", meta: "8 modules · Beginner" },
-];
-
-const features = [
-  ["⌁", "Learn by shipping", "Every path ends in a working flight-tech project, not another forgotten certificate."],
-  ["↗", "Built with experts", "Curriculum shaped by aerospace engineers, pilots, and developers in the field."],
-  ["◎", "Find your crew", "Get feedback, pair with peers, and meet builders who speak your language."],
-];
-
-interface HomePost extends RowDataPacket { slug:string; title:string; excerpt:string; category:string; published_at:Date }
-interface HomeProject extends RowDataPacket { slug:string; name:string; tagline:string; technologies:string; accent_color:string }
-
-// Keep the homepage HTML tied to the current build. Long-lived CDN caching can
-// otherwise leave visitors with an old HTML document that references deleted
-// hashed CSS assets after a deployment.
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default async function Home() {
-  const db=getDb();
-  const [[posts],[projects]]=await Promise.all([
-    db.execute<HomePost[]>("SELECT slug,title,excerpt,category,published_at FROM blog_posts WHERE published=TRUE ORDER BY published_at DESC,id DESC LIMIT 3"),
-    db.execute<HomeProject[]>("SELECT slug,name,tagline,technologies,accent_color FROM projects WHERE featured=TRUE ORDER BY launched_at DESC,id DESC LIMIT 2"),
-  ]);
-  return (
-    <main>
-      <SiteHeader />
-
-      <section className="hero shell" id="top">
-        <div className="hero-atmosphere" aria-hidden="true"><span className="flight-arc arc-one"><i>✦</i></span><span className="flight-arc arc-two"/><span className="hero-coordinate">37.7749° N / 122.4194° W</span></div>
-        <div className="eyebrow"><span className="pulse" /> Enrollment open · Cohort 04</div>
-        <div className="hero-grid">
-          <div className="hero-copy">
-            <h1>Where code<br />learns to <em>fly.</em></h1>
-            <p>Learn programming by building aviation software. Write, compile, and test real code for flight systems, drones, autonomy, telemetry, and safety-critical engineering.</p>
-            <div className="hero-actions"><a className="button" href="#tracks">Explore learning tracks <span>↗</span></a><a className="text-link" href="#method">See how it works <span>↓</span></a></div>
-          </div>
-          <div className="flight-card" aria-label="Flight code example">
-            <div className="card-top"><span><i className="dot red" /><i className="dot amber" /><i className="dot green" /></span><span>autopilot.py</span><span>•••</span></div>
-            <pre><code><span className="muted">01</span>  <span className="pink">class</span> <span className="blue">FlightController</span>:<br /><span className="muted">02</span>    <span className="pink">def</span> <span className="blue">navigate</span>(self, waypoint):<br /><span className="muted">03</span>      heading = self.<span className="yellow">calculate</span>(waypoint)<br /><span className="muted">04</span>      self.autopilot.<span className="yellow">engage</span>(heading)<br /><span className="muted">05</span><br /><span className="muted">06</span>  craft = <span className="blue">FlightController</span>(<span className="green-text">"FC-04"</span>)<br /><span className="muted">07</span>  craft.<span className="yellow">navigate</span>(<span className="green-text">"37.7749° N"</span>)<br /><span className="muted">08</span>  <span className="comment"># ready for takeoff_</span></code></pre>
-            <div className="radar"><span className="radar-ring r1"/><span className="radar-ring r2"/><span className="radar-cross horizontal"/><span className="radar-cross vertical"/><span className="plane">✦</span></div>
-            <div className="telemetry"><span><small>ALTITUDE</small>12,400 <b>FT</b></span><span><small>AIRSPEED</small>268 <b>KT</b></span><span><small>HEADING</small>074 <b>°</b></span></div>
-          </div>
-        </div>
-        <div className="trusted"><span>THE CODING PLATFORM FOR</span><b>AVIATION SOFTWARE</b><b>DRONE AUTONOMY</b><b>ROBOTICS</b><b>FLIGHT DATA</b></div>
-      </section>
-
-      <CodeLab/>
-
-      <section className="dark-section" id="method">
-        <div className="shell">
-          <div className="section-kicker">// WHY FLIGHTCODERS</div>
-          <div className="section-heading"><h2>Not another coding course.<br /><em>A runway.</em></h2><p>We connect software fundamentals to the machines and missions that make them matter.</p></div>
-          <div className="feature-grid">
-            {features.map(([icon,title,text], i) => <article className="feature" key={title}><span className="feature-no">0{i+1}</span><div className="feature-icon">{icon}</div><h3>{title}</h3><p>{text}</p></article>)}
-          </div>
-        </div>
-      </section>
-
-      <section className="tracks shell" id="tracks">
-        <div className="section-kicker dark">// CHOOSE YOUR FLIGHT PATH</div>
-        <div className="section-heading light"><h2>Start where<br />curiosity takes you.</h2><p>Focused learning tracks. Practical challenges. A portfolio that proves you can build.</p></div>
-        <div className="track-list">
-          {tracks.map(track => <a className="track" href="/tracks" key={track.number}><span className="track-no">{track.number}</span><div><h3>{track.title}</h3><p>{track.text}</p></div><span className="track-meta">{track.meta}</span><span className="track-arrow">↗</span></a>)}
-        </div>
-      </section>
-
-      <section className="engineering-proof">
-        <div className="shell proof-head"><div><span>// ENGINEERING, NOT EDUTAINMENT</span><h2>Train against<br/><em>production reality.</em></h2></div><p>FlightCoders brings software engineering rigor to high-consequence systems: observable code, measurable performance, deliberate failure handling, and projects that survive review.</p></div>
-        <div className="shell proof-stats"><article><strong>24+</strong><span>BUILD SYSTEMS<br/>IN THE LAB</span></article><article><strong>600+</strong><span>GLOBAL<br/>DEVELOPERS</span></article><article><strong>18</strong><span>EXPERT-LED<br/>REVIEWS</span></article><article><strong>92%</strong><span>SHIP A<br/>CAPSTONE</span></article></div>
-        <div className="tech-marquee" aria-label="Technology coverage"><div>PYTHON <i/> TYPESCRIPT <i/> ROS 2 <i/> PX4 <i/> MAVLINK <i/> C++ <i/> POSTGRESQL <i/> COMPUTER VISION <i/> CONTROL SYSTEMS <i/> DIGITAL TWINS</div></div>
-      </section>
-
-      <section className="home-projects shell">
-        <div className="home-section-intro"><span>// SHIPPED BY FLIGHTCODERS</span><h2>We teach builders.<br/>We build, too.</h2><Link href="/projects">Explore all products ↗</Link></div>
-        <div className="home-project-grid">{projects.map((project,index)=><Link href={`/projects/${project.slug}`} className="home-project" key={project.slug} style={{"--project-accent":project.accent_color} as React.CSSProperties}><span>0{index+1} / LIVE PRODUCT</span><div className="home-project-mark">{project.name.slice(0,1)}</div><h3>{project.name}</h3><p>{project.tagline}</p><div>{project.technologies.split(",").slice(0,4).map(item=><b key={item}>{item.trim()}</b>)}</div><strong>View case study ↗</strong></Link>)}</div>
-      </section>
-
-      <section className="home-notes">
-        <div className="shell home-notes-inner"><div className="home-section-intro"><span>// LATEST FLIGHT NOTES</span><h2>Engineering signals<br/>worth keeping.</h2><Link href="/blog">Browse the technical library ↗</Link></div><div className="home-note-list">{posts.map((post,index)=><article key={post.slug}><span>{String(index+1).padStart(2,"0")}</span><div><small>{post.category} · {new Date(post.published_at).toLocaleDateString("en",{month:"short",day:"2-digit"})}</small><h3>{post.title}</h3><p>{post.excerpt}</p></div><Link href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>↗</Link></article>)}</div></div>
-      </section>
-
-      <section className="community" id="community">
-        <div className="shell community-grid">
-          <div className="quote-mark">“</div>
-          <blockquote>FlightCoders gave me the bridge between loving aviation and actually building for it. Three months later, I shipped my first telemetry dashboard.</blockquote>
-          <div className="person"><span className="avatar">AK</span><span><b>Arjun Kapoor</b><small>Cohort 02 · Avionics developer</small></span></div>
-          <div className="community-stat"><strong>600+</strong><span>builders<br />worldwide</span></div>
-        </div>
-      </section>
-
-      <section className="cta" id="join">
-        <div className="shell cta-inner"><span className="orbit one"/><span className="orbit two"/><div className="section-kicker">// YOUR NEXT MISSION</div><h2>Ready for<br /><em>takeoff?</em></h2><p>Join Cohort 04. Applications close August 24.</p><a className="button white" href="/register">Apply to FlightCoders <span>↗</span></a></div>
-      </section>
-      <SiteFooter />
-    </main>
-  );
-}
-import type { RowDataPacket } from "mysql2";
 import Link from "next/link";
-import { getDb } from "../lib/db";
+import { BuildJourney, CommunityFeature } from "./components/CommunityFeature";
 import { SiteHeader } from "./components/SiteHeader";
 import { SiteFooter } from "./components/SiteFooter";
-import { CodeLab } from "./components/CodeLab";
+
+const hackathons = [
+  { date:"COMING SOON", mode:"GLOBAL · ONLINE", title:"Agentic AI Build Week", text:"Ship an autonomous workflow that turns intent into action.", tags:["OpenAI","Agents","TypeScript"], accent:"violet" },
+  { date:"COMING SOON", mode:"FORMAT TO BE ANNOUNCED", title:"Zero Knowledge Sprint", text:"Build private, verifiable products for an open digital world.", tags:["ZK","Rust","Web3"], accent:"lime" },
+  { date:"COMING SOON", mode:"GLOBAL · ONLINE", title:"Edge Intelligence Jam", text:"Take computer vision off the cloud and into the real world.", tags:["Edge AI","Python","Vision"], accent:"orange" },
+];
+
+const developers = [
+  { initials:"AM", name:"Aanya Mehta", role:"AI Systems Engineer", location:"Bengaluru, IN", stack:"PYTHON · LANGGRAPH · RUST", wins:"AI & automation", color:"#c9ff3d" },
+  { initials:"JL", name:"Jonas Lind", role:"Creative Technologist", location:"Stockholm, SE", stack:"THREE.JS · WEBGPU · REACT", wins:"Creative coding", color:"#8c6cff" },
+  { initials:"SK", name:"Sofia Kim", role:"Protocol Engineer", location:"Seoul, KR", stack:"RUST · SOLIDITY · ZK", wins:"Protocol design", color:"#ff6d45" },
+  { initials:"DO", name:"Diego Ortiz", role:"Product Engineer", location:"Mexico City, MX", stack:"NEXT.JS · GO · POSTGRES", wins:"Product development", color:"#42d7ff" },
+];
+
+const projects = [
+  { no:"01", title:"Synapse", category:"AI / PRODUCTIVITY", text:"A local-first thinking partner that turns scattered research into connected knowledge.", stack:"Tauri · Rust · Local LLM", metric:"AI WORKSPACE" },
+  { no:"02", title:"Proofline", category:"IDENTITY / ZK", text:"Portable proof-of-skill credentials that reveal ability without exposing identity.", stack:"Noir · Next.js · Polygon", metric:"PRIVACY BY DESIGN" },
+  { no:"03", title:"TerraScope", category:"CLIMATE / VISION", text:"Open satellite intelligence for detecting environmental change in near real time.", stack:"Python · PyTorch · Mapbox", metric:"OPEN SCIENCE" },
+];
+
+export default function Home() {
+  return <main className="hf-site"><SiteHeader/>
+    <section className="hf-hero shell"><div className="hf-hero-top"><span><i/> THE GLOBAL BUILDER NETWORK</span><span>EST. 2026 — OPEN TO ALL</span></div><div className="hf-hero-grid"><div className="hf-hero-copy"><h1>Big ideas.<br/>Brilliant people.<br/><em>Built together.</em></h1><p>Your next project starts with the right people. Explore emerging tech, find your next challenge, and build with a community that shares your ambition.</p><div className="hf-actions"><Link className="hf-primary" href="/register">Join the network <span>↗</span></Link><a href="#hackathons">Explore hackathons <span>↓</span></a></div></div><div className="hf-orbit" aria-hidden="true"><div className="hf-globe"><span className="node n1"/><span className="node n2"/><span className="node n3"/><span className="node n4"/><i/><b>&lt;/&gt;<br/><small>BUILD WITHOUT LIMITS</small></b></div><div className="orbit-label l1">BENGALURU</div><div className="orbit-label l2">SAN FRANCISCO</div><div className="orbit-label l3">BERLIN</div></div></div><div className="hf-ticker"><span>NOW TRENDING</span><div>AGENTIC AI <i/> WEBGPU <i/> ZERO KNOWLEDGE <i/> RUST <i/> EDGE COMPUTING <i/> SPATIAL WEB <i/> LOCAL-FIRST</div></div></section>
+
+    <BuildJourney/>
+    <section className="hf-hackathons shell" id="hackathons"><header className="hf-section-head"><div><span>01 / CHALLENGE CONCEPTS</span><h2>A new challenge.<br/><em>A new possibility.</em></h2></div><p>Compete with exceptional builders, learn emerging technology, and turn a weekend prototype into your next breakthrough.</p></header><div className="hf-event-grid">{hackathons.map((event,index)=><article className={`hf-event ${event.accent}`} key={event.title}><div className="hf-event-meta"><span>{event.date}</span><span>{event.mode}</span></div><div className={`fc-event-poster poster-${index}`} aria-hidden="true"><div className="fc-poster-label">FLIGHTCODERS / BUILD SERIES</div><strong>{[<>AGENT<br/>BUILDERS.</>,<>ZERO<br/>LIMITS.</>,<>BEYOND<br/>THE CLOUD.</>][index]}</strong><div className="fc-poster-art"><i/><i/><i/></div><small>{["AUTOMATE THE EXTRAORDINARY","PRIVACY. PROOF. POSSIBILITY.","INTELLIGENCE, EVERYWHERE."][index]}</small></div><h3>{event.title}</h3><p>{event.text}</p><div className="hf-tags">{event.tags.map(tag=><b key={tag}>{tag}</b>)}</div><Link href="/register">Join the community <span>↗</span></Link></article>)}</div></section>
+
+    <section className="hf-radar" id="radar"><div className="shell hf-radar-grid"><div><span>02 / FRONTIER RADAR</span><h2>The stacks<br/>shaping <em>tomorrow.</em></h2><p>Cut through the noise. Follow practical signals, learning paths, and open-source projects across technologies moving from experimental to essential.</p><Link href="/register">Build with these stacks ↗</Link></div><div className="hf-radar-visual" aria-label="Technology radar"><i className="rr r1"/><i className="rr r2"/><i className="rr r3"/><span className="radar-axis x"/><span className="radar-axis y"/><b className="tech t1">AI AGENTS</b><b className="tech t2">WEBGPU</b><b className="tech t3">RUST</b><b className="tech t4">ZK</b><b className="tech t5">EDGE AI</b><strong>2026<br/><small>RADAR</small></strong></div></div></section>
+
+    <section className="hf-builders shell" id="builders"><header className="hf-section-head"><div><span>03 / EXAMPLE BUILDER PROFILES</span><h2>World-class builders.<br/><em>Open profiles.</em></h2></div><p>Discover the people pushing technology forward. Follow their work, study their stacks, and find the right collaborators.</p></header><div className="hf-builder-grid">{developers.map((dev,index)=><article className="hf-builder" key={dev.name}><div className="hf-avatar" style={{"--avatar":dev.color} as React.CSSProperties}><span>{dev.initials}</span><i/></div><div className="hf-builder-index">0{index+1}</div><h3>{dev.name}</h3><p>{dev.role}</p><small>{dev.location}</small><div>{dev.stack}</div><footer><b>{dev.wins}</b><Link href="/register" aria-label={`View ${dev.name}'s profile`}>↗</Link></footer></article>)}</div></section>
+
+    <section className="hf-projects" id="projects"><div className="shell"><header className="hf-project-head"><span>04 / PROJECT INSPIRATION</span><h2>Ideas become<br/><em>real products.</em></h2><Link href="/register">Share your project ↗</Link></header><div className="hf-project-list">{projects.map(project=><article key={project.title}><span>{project.no}</span><div><small>{project.category}</small><h3>{project.title}</h3><p>{project.text}</p></div><div><b>{project.stack}</b><strong>{project.metric}</strong></div><Link href="/register" aria-label={`View ${project.title}`}>↗</Link></article>)}</div></div></section>
+
+    <CommunityFeature/>
+    <section className="hf-join shell"><span>THE NEXT BIG THING ISN’T FOUND.</span><h2>It’s <em>built.</em></h2><p>Create your profile. Meet your people. Ship something impossible.</p><Link className="hf-primary" href="/register">Create your builder profile <span>↗</span></Link><div className="hf-join-grid" aria-hidden="true"/></section><SiteFooter/></main>;
+}
