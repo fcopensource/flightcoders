@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Keep production builds from replacing files used by the active dev server.
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
   async headers() {
     return [{
       source: "/",
