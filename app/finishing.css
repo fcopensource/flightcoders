@@ -51,3 +51,14 @@ body .hf-site{background:radial-gradient(ellipse at 72% 4%,#1b242e66,transparent
 @media(max-width:850px){.shell{width:calc(100% - 56px)}.hf-site:before{inset-inline:12px}.hf-hero-grid{grid-template-columns:1fr;min-height:0;padding-block:60px}.hf-hero-copy h1{font-size:70px}.hf-section-head{grid-template-columns:1fr;gap:22px}.hf-event-grid{grid-template-columns:1fr}.fc-event-poster{aspect-ratio:1.9;padding:25px}.fc-event-poster>strong{font-size:65px;margin-top:24px}.fc-poster-label{font-size:10px}.fc-poster-art i{width:240px;height:240px;right:10px;bottom:-15px}.fc-journey,.fc-community-feature{grid-template-columns:1fr;gap:50px;padding-block:70px}.fc-journey h2{font-size:44px}.fc-pass-wrap{max-width:360px}.hf-site .nav-links>a{font-size:21px}.hf-hero-top span:last-child{display:none}}
 @media(max-width:540px){.shell{width:calc(100% - 40px)}.hf-site:before{inset-inline:8px}.hf-site .nav{height:75px}.hf-hero{padding-top:20px}.hf-hero-grid{padding-block:38px 50px}.hf-hero-copy h1{font-size:49px}.hf-hero-copy p{font-size:16px!important;line-height:1.75}.hf-hero-top{font-size:9px}.hf-ticker{height:60px}.hf-hackathons,.hf-builders,.hf-radar,.hf-projects{padding-block:65px}.hf-section-head h2,.hf-project-head h2,.hf-radar h2{font-size:35px}.hf-section-head>p{font-size:16px!important}.fc-event-poster{aspect-ratio:1.4;padding:20px}.fc-event-poster>strong{font-size:48px}.fc-poster-label{font-size:8px}.hf-event h3{font-size:26px}.hf-builder-grid{grid-template-columns:1fr}.hf-avatar{aspect-ratio:1.6}.hf-builder h3{font-size:24px}.hf-builder p{font-size:15px!important}.hf-builder small{font-size:11px}.fc-journey h2{font-size:38px}.fc-feature-copy h2{font-size:35px}.fc-feature-copy>p{font-size:16px!important}.hf-join{padding:55px 18px}.hf-join h2{font-size:66px}.hf-project-list h3{font-size:31px}.fc-builder-pass{transform:none}.hf-primary{gap:20px}.hf-site .hf-footer{padding-block:40px}}
 @media(prefers-reduced-motion:reduce){.hf-event:hover,.fc-builder-pass,.fc-builder-pass:hover{transform:none;transition:none}}
+
+/* Supplied FlightCoders identity: preserve the original artwork. */
+.brand .fc-brand-icon,.network-brand .fc-brand-icon{width:48px;height:48px;object-fit:contain;flex-shrink:0;border-radius:10px}
+.brand .fc-brand-name,.network-brand .fc-brand-name{font-size:22px;font-weight:800;letter-spacing:-.8px;color:#ecf3ee;white-space:nowrap}
+.brand .fc-brand-name>span,.network-brand .fc-brand-name>span{color:#24ee79}
+.network-sidebar .network-brand{display:flex;align-items:center;gap:9px}
+.network-sidebar .network-brand .fc-brand-icon{width:36px;height:36px}
+.network-sidebar .network-brand .fc-brand-name{font-size:19px}
+.fc-brand-showcase{padding-block:20px 40px}
+.fc-brand-showcase img{display:block;width:100%;height:auto;border:1px solid #17402c;border-radius:16px}
+@media(max-width:520px){.brand .fc-brand-name{font-size:19px}.brand .fc-brand-icon{width:40px;height:40px}.fc-brand-showcase{padding-block:10px 25px}}

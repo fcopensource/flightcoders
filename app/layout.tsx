@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   description: "The global network for hackathons, frontier technology, world-class developers, and projects worth shipping.",
   applicationName: "FlightCoders",
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-  openGraph: { type: "website", url: siteUrl, siteName: "FlightCoders", title: "FlightCoders — Build what's next", description: "Meet frontier technology, ambitious builders, and projects worth shipping.", images: [{ url: "/og.png", width: 1200, height: 630, alt: "FlightCoders — Build what's next" }] },
-  twitter: { card: "summary_large_image", title: "FlightCoders", description: "Build what's next. Together.", images: ["/og.png"] },
+  icons: { icon: { url: "/brand/flightcoders-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-icon.png", apple: "/brand/flightcoders-icon.png" },
+  openGraph: { type: "website", url: siteUrl, siteName: "FlightCoders", title: "FlightCoders — Build what's next", description: "Meet frontier technology, ambitious builders, and projects worth shipping.", images: [{ url: "/brand/flightcoders-banner.png", width: 1672, height: 941, alt: "FlightCoders — Build what's next" }] },
+  twitter: { card: "summary_large_image", title: "FlightCoders", description: "Build what's next. Together.", images: ["/brand/flightcoders-banner.png"] },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
