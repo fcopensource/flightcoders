@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+export const metadata:Metadata=pageMetadata({title:"Terms of service",description:"The terms that govern your FlightCoders account, learning content, and community participation.",path:"/terms"});
 
 const sections=[
   ["01", "Your account", "You must provide accurate information, keep access to your sign-in identity secure, and notify us if you believe your account is being misused. You are responsible for activity performed through your account."],

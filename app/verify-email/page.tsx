@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
+import { noIndexMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+export const metadata:Metadata={title:"Verify your email",...noIndexMetadata};
 
 export default async function VerifyEmailPage({searchParams}:{searchParams:Promise<{sent?:string;resent?:string;email?:string;error?:string;token?:string}>}){
  const p=await searchParams;

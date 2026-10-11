@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
+import { noIndexMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { GitHubAuthButton } from "../components/GitHubAuthButton";
+export const metadata:Metadata={title:"Sign in",...noIndexMetadata};
 
 export default async function LoginPage({searchParams}:{searchParams:Promise<{error?:string;next?:string;verified?:string}>}){
  const params=await searchParams;

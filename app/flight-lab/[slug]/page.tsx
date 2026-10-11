@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { noIndexMetadata } from "../../../lib/seo";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {requireUser} from "../../../lib/auth";
@@ -5,6 +7,7 @@ import {flightChallenges} from "../../../lib/flightChallenges";
 import {radarMission} from "../../../lib/flightMission";
 import {FlightIDE} from "../../components/FlightIDE";
 import {ChallengeIDE} from "../../components/ChallengeIDE";
+export const metadata:Metadata={title:"Flight Lab challenge",...noIndexMetadata};
 
 export const dynamic="force-dynamic";
 type PageProps={params:Promise<{slug:string}>};

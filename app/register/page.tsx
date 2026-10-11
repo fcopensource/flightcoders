@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { GitHubAuthButton } from "../components/GitHubAuthButton";
+export const metadata:Metadata=pageMetadata({title:"Join FlightCoders — Create your free builder profile",description:"Create a free FlightCoders profile to join hackathons, solve coding challenges, find collaborators, and showcase your projects.",path:"/register"});
 
 export default async function RegisterPage({searchParams}:{searchParams:Promise<{error?:string}>}){
  const params=await searchParams;
