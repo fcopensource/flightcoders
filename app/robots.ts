@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
+import { siteUrl as base } from "../lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com";
-  return { rules: [{ userAgent: "*", allow: "/", disallow: ["/dashboard", "/api/"] }], sitemap: `${base}/sitemap.xml`, host: base };
+  return {
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/dashboard", "/api/", "/profile", "/flight-lab", "/login", "/verify-email"] }],
+    sitemap: `${base}/sitemap.xml`,
+    host: base,
+  };
 }

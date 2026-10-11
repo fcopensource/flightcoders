@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import Link from "next/link";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+export const metadata:Metadata=pageMetadata({title:"Learning tracks — Flight systems, drone autonomy & aviation data",description:"Project-based learning tracks for developers: flight systems, drone autonomy with ROS 2 and PX4, aviation data, and more. Build real capstone projects.",path:"/tracks"});
 
 const paths = [
   { code:"FS-101", title:"Flight Systems", level:"Intermediate", duration:"12 weeks", projects:"4 projects", desc:"Build the software layer behind navigation, sensor fusion, telemetry, and resilient airborne systems.", skills:["Python","C++","MAVLink","Kalman filters"], project:"Capstone: autonomous route controller" },

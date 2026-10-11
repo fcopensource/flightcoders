@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
+import { noIndexMetadata } from "../../lib/seo";
 import Link from "next/link";
 import {requireUser} from "../../lib/auth";
 import {flightChallenges} from "../../lib/flightChallenges";
 import {radarMission} from "../../lib/flightMission";
+export const metadata:Metadata={title:"Flight Lab coding challenges",...noIndexMetadata};
 export const dynamic="force-dynamic";
 
 const problems=[

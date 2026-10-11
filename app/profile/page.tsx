@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
+import { noIndexMetadata } from "../../lib/seo";
 import { requireUser } from "../../lib/auth";
 import { getSocialLinks } from "../../lib/profile";
 import { ProfileForm } from "../components/ProfileForm";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import "./profile.css";
+export const metadata:Metadata={title:"Your profile",...noIndexMetadata};
 export default async function ProfilePage() {
  const user=await requireUser("/profile");
  const links=await getSocialLinks(user.id);
