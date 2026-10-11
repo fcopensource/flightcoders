@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import HackerGlobe from "./components/HackerGlobe";
 import { BuildJourney, CommunityFeature } from "./components/CommunityFeature";
 import { SiteHeader } from "./components/SiteHeader";
 import { SiteFooter } from "./components/SiteFooter";
+export const metadata:Metadata={alternates:{canonical:"/"}};
 
 const hackathons = [
   { date:"COMING SOON", mode:"GLOBAL · ONLINE", title:"Agentic AI Build Week", text:"Ship an autonomous workflow that turns intent into action.", tags:["OpenAI","Agents","TypeScript"], accent:"violet" },

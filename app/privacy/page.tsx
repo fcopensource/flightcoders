@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "../../lib/seo";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+export const metadata:Metadata=pageMetadata({title:"Privacy policy",description:"How FlightCoders collects, uses, stores, and protects your personal information.",path:"/privacy"});
 
 const sections=[
   ["01", "What we collect", "When you create an account, we store your name, email address, securely hashed password, role, learning goal, and track preferences. We also store session and AI mentor conversation records needed to provide the service."],
