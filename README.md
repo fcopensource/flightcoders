@@ -1,6 +1,6 @@
 # FlightCoders
 
-FlightCoders is a full-stack Next.js learning platform for aviation software, autonomy, robotics, and flight data.
+FlightCoders is a software development company website showcasing AI systems, intelligent software, web products, and developer tools. Project inquiries go to hire@flightcoders.com.
 
 ## Stack
 

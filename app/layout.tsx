@@ -4,18 +4,20 @@ import { JsonLd, ogImage, siteName, siteUrl } from "../lib/seo";
 import "./globals.css";
 import "./flightcoders.css";
 import "./finishing.css";
+import "./theme.css";
+import "./company.css";
 
 
 const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
-const description = "FlightCoders is the global developer community for hackathons, coding challenges, learning tracks, and open-source projects. Meet builders, sharpen your skills, and ship what's next.";
+const description = "FlightCoders is a software development company building artificial intelligence systems, intelligent software, web platforms, and custom digital products.";
 
 // No site-wide canonical here: each page declares its own, otherwise every page would canonicalize to the homepage.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "FlightCoders — Global Developer Community, Hackathons & Coding Challenges", template: "%s · FlightCoders" },
+  title: { default: "FlightCoders — AI Systems & Software Development", template: "%s · FlightCoders" },
   description,
   applicationName: siteName,
-  keywords: ["developer community", "hackathons", "coding challenges", "learn to code", "open source projects", "programming community", "software engineering", "AI agents", "Rust", "flight software", "drone autonomy", "FlightCoders"],
+  keywords: ["software development company", "artificial intelligence systems", "intelligent software systems", "custom software", "web development", "AI agents", "FlightCoders"],
   authors: [{ name: siteName, url: siteUrl }],
   creator: siteName,
   publisher: siteName,
@@ -23,12 +25,12 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   icons: { icon: { url: "/brand/flightcoders-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-icon.png", apple: "/brand/flightcoders-icon.png" },
-  openGraph: { type: "website", locale: "en_US", url: siteUrl, siteName, title: "FlightCoders — Build what's next", description: "Meet frontier technology, ambitious builders, and projects worth shipping.", images: [ogImage] },
-  twitter: { card: "summary_large_image", title: "FlightCoders — Build what's next", description: "The global developer community for hackathons, coding challenges, and projects worth shipping.", images: [ogImage.url] },
+  openGraph: { type: "website", locale: "en_US", url: siteUrl, siteName, title: "FlightCoders — Build what's next", description: "Artificial intelligence systems, intelligent software, and custom product development.", images: [ogImage] },
+  twitter: { card: "summary_large_image", title: "FlightCoders — Build what's next", description: "Hire FlightCoders to build AI systems, intelligent software, and digital products.", images: [ogImage.url] },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0b0b0f" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#090b0e" };
 
 const organization = {
   "@context": "https://schema.org",
