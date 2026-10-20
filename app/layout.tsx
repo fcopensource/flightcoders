@@ -6,7 +6,6 @@ import "./flightcoders.css";
 import "./finishing.css";
 import "./theme.css";
 import "./company.css";
-import "./studio.css";
 
 
 const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
