@@ -1,0 +1,7 @@
+import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+export const alt="FlightCoders — Custom software development and AI solutions";
+export const size={width:1200,height:630};
+export const contentType="image/png";
+export default async function Image(){const logo=await readFile(join(process.cwd(),"public/brand/flightcoders-green-icon.png"));return new ImageResponse(<div style={{display:"flex",flexDirection:"column",justifyContent:"space-between",width:"100%",height:"100%",padding:65,background:"#eff7f2",color:"#153b2e",fontFamily:"sans-serif"}}><div style={{display:"flex",alignItems:"center",gap:16}}><img src={`data:image/png;base64,${logo.toString("base64")}`} width="64" height="64" alt=""/><span style={{fontSize:36,fontWeight:700}}>FlightCoders</span></div><div style={{display:"flex",flexDirection:"column",gap:18}}><span style={{fontSize:62,fontWeight:700,letterSpacing:-2}}>Custom software.</span><span style={{fontSize:62,fontWeight:700,color:"#087f5b",letterSpacing:-2}}>Built for your business.</span><span style={{fontSize:24,color:"#476355",marginTop:12}}>AI systems · Web &amp; SaaS · Desktop applications</span></div><div style={{display:"flex",justifyContent:"space-between",borderTop:"1px solid #c7dfd1",paddingTop:22,fontSize:21}}><span>flightcoders.com</span><span>hire@flightcoders.com</span></div></div>,size);}

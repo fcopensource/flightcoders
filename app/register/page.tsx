@@ -1,8 +1,8 @@
 import { pageMetadata } from "../../lib/seo";
 import { AuthFrame } from "../components/AuthFrame";
 import { AccountForm } from "../components/AccountForm";
-export const metadata=pageMetadata({title:"Create your account",description:"Create your FlightCoders account to build your profile, share your projects, and connect with developers.",path:"/register"});
+export const metadata=pageMetadata({title:"Create your account",description:"Create your FlightCoders account to build your profile, share your projects, and connect with developers.",path:"/register",noIndex:true});
 export default async function RegisterPage({searchParams}:{searchParams:Promise<{error?:string}>}){
  const params=await searchParams;
- return <AuthFrame mode="register"><AccountForm mode="register" error={params.error}/></AuthFrame>;
+ return <AuthFrame mode="register"><AccountForm githubEnabled={Boolean(process.env.GITHUB_CLIENT_ID?.trim())} mode="register" error={params.error}/></AuthFrame>;
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const siteUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com").replace(/\/$/, "");
 export const siteName = "FlightCoders";
-export const ogImage = { url: "/brand/flightcoders-green-icon.png", width: 1280, height: 1280, alt: "FlightCoders — Build what's next" };
+export const ogImage = { url: "/opengraph-image", width: 1200, height: 630, alt: "FlightCoders — Custom software development and AI solutions" };
 
 /** Per-page metadata with its own canonical URL and matching Open Graph / Twitter tags. */
 export function pageMetadata({ title, description, path, type = "website", noIndex = false }: { title: string; description: string; path: string; type?: "website" | "article"; noIndex?: boolean }): Metadata {
@@ -12,12 +12,12 @@ export function pageMetadata({ title, description, path, type = "website", noInd
     alternates: { canonical: path },
     openGraph: { type, url: path, siteName, title, description, images: [ogImage] },
     twitter: { card: "summary_large_image", title, description, images: [ogImage.url] },
-    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
+    ...(noIndex ? { robots: { index: false, follow: true, googleBot: { index: false, follow: true } } } : {}),
   };
 }
 
 /** Private / account pages that should never appear in search results. */
-export const noIndexMetadata: Metadata = { robots: { index: false, follow: false } };
+export const noIndexMetadata: Metadata = { robots: { index: false, follow: false, googleBot: { index: false, follow: false } } };
 
 /** Renders schema.org structured data. `<` is escaped so content can't break out of the script tag. */
 export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {

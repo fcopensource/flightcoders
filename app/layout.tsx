@@ -37,7 +37,7 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 const organization = {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-green-icon.png`, image: `${siteUrl}${ogImage.url}`, description, sameAs: ["https://github.com/fcopensource"] },
+    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-green-icon.png`, image: `${siteUrl}${ogImage.url}`, description, email: "hire@flightcoders.com", contactPoint: [{ "@type": "ContactPoint", contactType: "sales", email: "hire@flightcoders.com" }], sameAs: ["https://github.com/fcopensource"] },
     { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: siteName, url: siteUrl, description, publisher: { "@id": `${siteUrl}/#organization` }, inLanguage: "en" },
   ],
 };

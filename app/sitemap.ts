@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { RowDataPacket } from "mysql2";
 import { getDb } from "../lib/db";
+import { serviceDetails } from "../lib/service-details";
 import { siteUrl as base } from "../lib/seo";
 
 // Regenerate hourly so new blog posts, jobs, and projects are discovered without a redeploy.
@@ -13,7 +14,7 @@ async function rows(sql: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const updated = new Date("2026-10-13");
+  const updated = new Date("2026-10-24");
   const [posts, jobs, projects] = await Promise.all([
     rows("SELECT slug,updated_at FROM blog_posts WHERE published=TRUE"),
     rows("SELECT slug,updated_at FROM jobs WHERE is_open=TRUE"),
@@ -30,9 +31,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/jobs`, lastModified: updated, changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/hire-us`, lastModified: updated, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/about`, lastModified: updated, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/register`, lastModified: updated, changeFrequency: "monthly", priority: 0.6 },
+
     { url: `${base}/privacy`, lastModified: updated, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/terms`, lastModified: updated, changeFrequency: "yearly", priority: 0.3 },
+    ...serviceDetails.map(s=>({url:`${base}/services/${s.slug}`,lastModified:updated,changeFrequency:"monthly" as const,priority:0.9})),
     ...dynamic("blog", posts, 0.8),
     ...dynamic("projects", projects, 0.8),
     ...dynamic("jobs", jobs, 0.6),
