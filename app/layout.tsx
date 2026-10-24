@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {Manrope} from "next/font/google";
+import {Poppins} from "next/font/google";
 import { JsonLd, ogImage, siteName, siteUrl } from "../lib/seo";
 import "./globals.css";
 import "./flightcoders.css";
@@ -9,7 +9,7 @@ import "./company.css";
 import "./glass.css";
 
 
-const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
+const poppins=Poppins({subsets:["latin"],weight:["400","500","600","700","800"],variable:"--font-flight-sans",display:"swap"});
 const description = "FlightCoders is a software development company building artificial intelligence systems, intelligent software, web platforms, and custom digital products.";
 
 // No site-wide canonical here: each page declares its own, otherwise every page would canonicalize to the homepage.
@@ -42,5 +42,5 @@ const organization = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" className={manrope.variable}><body><JsonLd data={organization}/>{children}</body></html>;
+  return <html lang="en" className={poppins.variable}><body><JsonLd data={organization}/>{children}</body></html>;
 }

@@ -1,15 +1,15 @@
 /* Shared homepage palette. Route styles consume these tokens. */
 :root {
   color-scheme: dark;
-  --fc-bg: #0c0a12;
-  --fc-panel: #121019;
-  --fc-panel-raised: #1a1523;
+  --fc-bg: #0a120f;
+  --fc-panel: #101916;
+  --fc-panel-raised: #15231e;
   --fc-line: #25282e;
-  --fc-accent: #a477ff;
+  --fc-accent: #087f5b;
   --fc-green: var(--fc-accent);
   --fc-muted: #a2a6ae;
-  --fc-text: #f4f2f6;
-  --fc-on-accent: #140a24;
+  --fc-text: #f2f6f5;
+  --fc-on-accent: #0c221a;
   --ink: var(--fc-text);
   --cream: var(--fc-bg);
   --blue: var(--fc-green);
@@ -32,14 +32,14 @@ body :is(.subhero,.content-hero,.legal,.article-page,.job-detail,.project-case) 
 body :is(.section-kicker,.section-kicker.dark,.content-hero>span,.legal-head>span,.article-page>header>span) {color:var(--fc-green)}
 body :is(.path-card,.editorial-card,.job-row,.job-description,.case-facts,.case-narrative,.value-grid article,.signal-code,.profile-form) {background:var(--fc-panel);border-color:var(--fc-line);color:var(--fc-text);box-shadow:none;border-radius:12px}
 body :is(.path-card,.editorial-card,.job-row,.value-grid article) {transition:border-color .2s,transform .2s}
-body :is(.path-card,.editorial-card,.job-row,.value-grid article):hover {border-color:#534669}
+body :is(.path-card,.editorial-card,.job-row,.value-grid article):hover {border-color:#46695c}
 body :is(.path-card,.editorial-card,.job-row,.case-facts,.value-grid article) :is(p,small) {color:var(--fc-muted)}
 body :is(.path-top,.path-facts,.skill-row,.capstone,.job-meta,.jobs-summary,.case-stack,.legal-sections section) {border-color:var(--fc-line);color:var(--fc-muted)}
 body :is(.path-top>span,.path-link,.editorial-card>a,.job-row>a,.article-body a,.legal a,.case-actions>a:not(.button)) {color:var(--fc-green)}
 body :is(.skill-row span,.case-stack span,.job-meta span) {background:var(--fc-panel);border-color:var(--fc-line);color:var(--fc-text)}
 body :is(.manifesto,.mini-cta,.mini-cta.blue,.signal) {background:linear-gradient(140deg,var(--fc-panel-raised),var(--fc-bg));color:var(--fc-text);border-color:var(--fc-line)}
 body :is(.manifesto,.mini-cta,.signal) :is(p,small) {color:var(--fc-muted)}
-body :is(.button.white,.path-link) {background:var(--fc-green);color:var(--fc-on-accent);border:1px solid #b492ea;border-radius:6px}
+body :is(.button.white,.path-link) {background:var(--fc-green);color:var(--fc-on-accent);border:1px solid #087f5b;border-radius:6px}
 body :is(.network-app,.network-public) {--nw-bg:var(--fc-bg);--nw-panel:var(--fc-panel);--nw-line:var(--fc-line);--nw-muted:var(--fc-muted);--nw-green:var(--fc-green)}
 body .network-app {background:var(--fc-bg)}
 body :is(.network-feed button,.network-tabs button[aria-pressed=true]) {color:var(--fc-on-accent)}
@@ -47,9 +47,9 @@ body .network-tabs button[aria-pressed=false] {background:transparent;color:var(
 body .network-feed .network-text-button {background:transparent;color:var(--fc-green)}
 body :is(.network-compose,.network-post,.network-rail article,.network-invite,.simple-profile-form,.fc-original-project) {background:var(--fc-panel);border-color:var(--fc-line)}
 body :is(.network-welcome h1 em,.builder-profile h1 em,.fc-projects-intro h1 em) {color:var(--fc-green)}
-body .problem-list-page {background:radial-gradient(circle at 70% 0%,#a378e712,transparent 35%),var(--fc-bg);color:var(--fc-text)}
+body .problem-list-page {background:radial-gradient(circle at 70% 0%,#087f5b12,transparent 35%),var(--fc-bg);color:var(--fc-text)}
 body :is(.problem-nav,.problem-layout>aside,.problem-tools label) {background:var(--fc-panel);border-color:var(--fc-line);box-shadow:none}
-body .problem-hero {background:linear-gradient(120deg,var(--fc-panel-raised),var(--fc-panel));border-color:#534669;box-shadow:none}
+body .problem-hero {background:linear-gradient(120deg,var(--fc-panel-raised),var(--fc-panel));border-color:#46695c;box-shadow:none}
 body .problem-hero:after {background:none}
 body :is(.problem-layout>aside a.active,.topic-strip button,.compact-problems>a:nth-child(even)) {background:var(--fc-panel);box-shadow:none}
 body .topic-strip button.active {background:var(--fc-green);color:var(--fc-on-accent);box-shadow:none}
@@ -64,7 +64,7 @@ body :is(.article-body,.job-description) pre {background:var(--fc-panel);border:
 /* Legacy lab rules use !important; match that priority at the theme boundary. */
 body .problem-list-page {background:var(--fc-bg)!important;color:var(--fc-text)!important}
 body :is(.problem-nav,.problem-layout>aside,.problem-tools label,.topic-strip button,.compact-problems>a:nth-child(even)) {background:var(--fc-panel)!important;border-color:var(--fc-line)!important;color:var(--fc-muted)!important}
-body :is(.problem-hero,.problem-layout>aside a.active,.compact-problems>a:hover) {background:var(--fc-panel-raised)!important;border-color:#534669!important;box-shadow:none!important}
+body :is(.problem-hero,.problem-layout>aside a.active,.compact-problems>a:hover) {background:var(--fc-panel-raised)!important;border-color:#46695c!important;box-shadow:none!important}
 body .topic-strip button.active {background:var(--fc-green)!important;color:var(--fc-on-accent)!important}
 body .flight-lab-page {background:var(--fc-bg);color:var(--fc-text)}
 body :is(.lab-topbar,.playground-toolbar,.playground-workspace,.playground-console,.hardware-terminal,.workspace-hardware,.solver-bar,.solver-description,.solver-code,.test-view,.practice-ide,.practice-ide>header,.practice-ide aside) {background:var(--fc-panel);border-color:var(--fc-line);color:var(--fc-text);box-shadow:none}
@@ -77,28 +77,28 @@ body .path-grid .path-card,body .path-grid .path-card:nth-child(2n),body .path-g
 body .path-grid .path-card:after,body .path-grid .path-card:before,body .editorial-card:before,body .job-row:before {background:var(--fc-green)}
 body .path-grid .path-card .path-link {padding:14px 16px;color:var(--fc-on-accent)}
 body :is(.subhero,.content-hero) {border-color:var(--fc-line)}
-body :is(.subhero,.content-hero):before {background-image:linear-gradient(#a477ff06 1px,transparent 1px),linear-gradient(90deg,#a477ff06 1px,transparent 1px),radial-gradient(circle at 82% 30%,#a477ff10,transparent 24%)}
-body :is(.subhero,.content-hero):after {color:var(--fc-green);border-color:#a477ff35;box-shadow:0 0 0 42px #a477ff06,0 0 0 84px #a477ff04}
+body :is(.subhero,.content-hero):before {background-image:linear-gradient(#087f5b06 1px,transparent 1px),linear-gradient(90deg,#087f5b06 1px,transparent 1px),radial-gradient(circle at 82% 30%,#087f5b10,transparent 24%)}
+body :is(.subhero,.content-hero):after {color:var(--fc-green);border-color:#087f5b35;box-shadow:0 0 0 42px #087f5b06,0 0 0 84px #087f5b04}
 body .network-feed button.network-text-button {color:var(--fc-green);background:transparent}
 body .network-feed button.network-text-button:disabled {color:var(--fc-muted);opacity:1}
 body .hf-auth-page .auth-card {background:var(--fc-panel);border-color:var(--fc-line)}
 body .hf-auth-page .auth-aside h1 em {color:var(--fc-green)}
-body .hf-auth-page :is(.auth-card input,.auth-card select) {background:var(--fc-bg);border-color:#3c3941;color:var(--fc-text)}
-body .hf-auth-page :is(.auth-card input,.auth-card select):focus {border-color:var(--fc-green);box-shadow:0 0 0 3px #a477ff20}
-body .hf-auth-page .github-auth-button {background:var(--fc-panel-raised);border-color:#3c3941}
+body .hf-auth-page :is(.auth-card input,.auth-card select) {background:var(--fc-bg);border-color:#39413e;color:var(--fc-text)}
+body .hf-auth-page :is(.auth-card input,.auth-card select):focus {border-color:var(--fc-green);box-shadow:0 0 0 3px #087f5b20}
+body .hf-auth-page .github-auth-button {background:var(--fc-panel-raised);border-color:#39413e}
 body .hf-auth-page :is(.auth-aside>p,.auth-card>p,.auth-legal,.auth-switch) {color:var(--fc-muted)}
 body .hf-auth-page :is(.auth-code,.verification-link a,.auth-switch a) {color:var(--fc-green)}
 body .hf-auth-signal {background:var(--fc-panel);border-color:var(--fc-line);box-shadow:8px 8px 0 var(--fc-panel-raised)}
 
 /* Purple identity shared by the company and community pages. */
 body .fc-brand-name>span{color:var(--fc-accent)}
-body .hf-primary,body .button{color:#170d28}
-body .hf-primary:hover,body .button:hover{background:#b992ff}
+body .hf-primary,body .button{color:#0d281e}
+body .hf-primary:hover,body .button:hover{background:#087f5b}
 body .fc-brand-icon{border-radius:0}
 
 body .hf-hero-copy h1 em{color:var(--fc-accent)}
-body :is(.hf-primary,.button,.hf-auth-page .auth-submit){background:linear-gradient(135deg,#b892ff,#a477ff);border-color:#bd9aff;color:#170d28;box-shadow:inset 0 1px 0 #ffffff25,0 4px 18px #a477ff14}
-body :is(.hf-primary,.button,.hf-auth-page .auth-submit):hover{background:#c09aff}
+body :is(.hf-primary,.button,.hf-auth-page .auth-submit){background:linear-gradient(135deg,#087f5b,#087f5b);border-color:#b3e6d3;color:#0d281e;box-shadow:inset 0 1px 0 #ffffff25,0 4px 18px #087f5b14}
+body :is(.hf-primary,.button,.hf-auth-page .auth-submit):hover{background:#b3e6d3}
 body .hf-actions>a:last-child{color:var(--fc-text)}
 body :is(.brand,.network-brand) .fc-brand-name>span{color:var(--fc-accent)}
-body .hf-hero-top i{background:var(--fc-accent);box-shadow:0 0 0 4px #a477ff20}
+body .hf-hero-top i{background:var(--fc-accent);box-shadow:0 0 0 4px #087f5b20}
