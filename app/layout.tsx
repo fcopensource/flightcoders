@@ -6,6 +6,7 @@ import "./flightcoders.css";
 import "./finishing.css";
 import "./theme.css";
 import "./company.css";
+import "./glass.css";
 
 
 const manrope=Manrope({subsets:["latin"],variable:"--font-flight-sans",display:"swap"});
@@ -24,18 +25,18 @@ export const metadata: Metadata = {
   category: "technology",
   formatDetection: { telephone: false },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  icons: { icon: { url: "/brand/flightcoders-purple-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-purple-icon.png", apple: "/brand/flightcoders-purple-icon.png" },
+  icons: { icon: { url: "/brand/flightcoders-green-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-green-icon.png", apple: "/brand/flightcoders-green-icon.png" },
   openGraph: { type: "website", locale: "en_US", url: siteUrl, siteName, title: "FlightCoders — Build what's next", description: "Artificial intelligence systems, intelligent software, and custom product development.", images: [ogImage] },
   twitter: { card: "summary_large_image", title: "FlightCoders — Build what's next", description: "Hire FlightCoders to build AI systems, intelligent software, and digital products.", images: [ogImage.url] },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0c0a12" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#f6faf7" };
 
 const organization = {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-purple-icon.png`, image: `${siteUrl}${ogImage.url}`, description, sameAs: ["https://github.com/fcopensource"] },
+    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-green-icon.png`, image: `${siteUrl}${ogImage.url}`, description, sameAs: ["https://github.com/fcopensource"] },
     { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: siteName, url: siteUrl, description, publisher: { "@id": `${siteUrl}/#organization` }, inLanguage: "en" },
   ],
 };

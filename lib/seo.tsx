@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const siteUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://flightcoders.com").replace(/\/$/, "");
 export const siteName = "FlightCoders";
-export const ogImage = { url: "/brand/flightcoders-purple-logo.png", width: 1944, height: 809, alt: "FlightCoders — Build what's next" };
+export const ogImage = { url: "/brand/flightcoders-green-icon.png", width: 1280, height: 1280, alt: "FlightCoders — Build what's next" };
 
 /** Per-page metadata with its own canonical URL and matching Open Graph / Twitter tags. */
 export function pageMetadata({ title, description, path, type = "website", noIndex = false }: { title: string; description: string; path: string; type?: "website" | "article"; noIndex?: boolean }): Metadata {

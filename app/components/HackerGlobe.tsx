@@ -21,7 +21,7 @@ export default function HackerGlobe() {
     scene.add(globe);
     globe.rotation.y = Math.PI;
     scene.add(new THREE.AmbientLight(0x93bbcf, 1.2));
-    const sunlight = new THREE.DirectionalLight(0xe4d4ff, 3);
+    const sunlight = new THREE.DirectionalLight(0xe2ffed, 3);
     sunlight.position.set(-3, 4, 5); scene.add(sunlight);
     const surface = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .72, metalness: .22 });
     globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.15, 96, 64), surface));
@@ -31,7 +31,7 @@ export default function HackerGlobe() {
     const canvas = document.createElement("canvas");
     canvas.width = 2048; canvas.height = 1024;
     const context = canvas.getContext("2d")!;
-    context.fillStyle = "#160d28"; context.fillRect(0, 0, 2048, 1024);
+    context.fillStyle = "#d9eee5"; context.fillRect(0, 0, 2048, 1024);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -42,7 +42,7 @@ export default function HackerGlobe() {
       return response.json();
     }).then((data: { features: { geometry: { type: string; coordinates: Polygon | Polygon[] } }[] }) => {
       if (controller.signal.aborted) return;
-      context.fillStyle = "#654097"; context.strokeStyle = "#b898ee"; context.lineWidth = 1.1;
+      context.fillStyle = "#208562"; context.strokeStyle = "#80c7a8"; context.lineWidth = 1.1;
       for (const { geometry } of data.features) {
         const polygons = geometry.type === "Polygon" ? [geometry.coordinates as Polygon] : geometry.coordinates as Polygon[];
         for (const polygon of polygons) {
@@ -60,11 +60,11 @@ export default function HackerGlobe() {
       }
       texture.needsUpdate = true;
     }).catch(() => { /* Keep the lit ocean globe if the map request is interrupted. */ });
-    globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.17, 24, 12), new THREE.MeshBasicMaterial({ color: 0x8051c4, wireframe: true, transparent: true, opacity: .13 })));
+    globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.17, 24, 12), new THREE.MeshBasicMaterial({ color: 0x087f5b, wireframe: true, transparent: true, opacity: .13 })));
     const halo = new THREE.Mesh(new THREE.SphereGeometry(1.22, 64, 64), new THREE.ShaderMaterial({
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       vertexShader: "varying vec3 n; varying vec3 v; void main(){vec4 p=modelViewMatrix*vec4(position,1.); n=normalize(normalMatrix*normal); v=normalize(-p.xyz); gl_Position=projectionMatrix*p;}",
-      fragmentShader: "varying vec3 n; varying vec3 v; void main(){float rim=pow(1.-max(dot(normalize(n),normalize(v)),0.),3.); gl_FragColor=vec4(.55,.28,.95,rim*.32);}",
+      fragmentShader: "varying vec3 n; varying vec3 v; void main(){float rim=pow(1.-max(dot(normalize(n),normalize(v)),0.),3.); gl_FragColor=vec4(.05,.5,.32,rim*.32);}",
     }));
     scene.add(halo);
     const countries = [
@@ -81,9 +81,9 @@ export default function HackerGlobe() {
     countries.forEach(country => {
       const labelCanvas = document.createElement("canvas"); labelCanvas.width = 512; labelCanvas.height = 96;
       const ctx = labelCanvas.getContext("2d")!;
-      ctx.fillStyle = "rgba(3,14,22,.88)"; ctx.fillRect(0, 0, 512, 96);
-      ctx.strokeStyle = "#7956aa"; ctx.lineWidth = 3; ctx.strokeRect(2, 2, 508, 92);
-      ctx.fillStyle = "#eee3ff"; ctx.font = "32px monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(248,255,251,.94)"; ctx.fillRect(0, 0, 512, 96);
+      ctx.strokeStyle = "#86bca5"; ctx.lineWidth = 3; ctx.strokeRect(2, 2, 508, 92);
+      ctx.fillStyle = "#153b2e"; ctx.font = "32px monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(country.name, 256, 48);
       const map = new THREE.CanvasTexture(labelCanvas); map.colorSpace = THREE.SRGBColorSpace; textures.push(map);
       const label = new THREE.Sprite(new THREE.SpriteMaterial({ map, transparent: true, depthWrite: false }));
@@ -97,7 +97,7 @@ export default function HackerGlobe() {
       const b = locate(destination.lat, destination.lon);
       const mid = a.clone().add(b).normalize().multiplyScalar(1.65);
       const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
-      globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)), new THREE.LineBasicMaterial({ color: 0xa477ff, transparent: true, opacity: .5 })));
+      globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)), new THREE.LineBasicMaterial({ color: 0x087f5b, transparent: true, opacity: .5 })));
     }
     let pointer = 0;
     const onMove = (event: PointerEvent) => { const rect = element.getBoundingClientRect(); pointer = ((event.clientX - rect.left) / rect.width - .5) * .2; };
