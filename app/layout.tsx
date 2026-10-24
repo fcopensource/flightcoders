@@ -24,18 +24,18 @@ export const metadata: Metadata = {
   category: "technology",
   formatDetection: { telephone: false },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  icons: { icon: { url: "/brand/flightcoders-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-icon.png", apple: "/brand/flightcoders-icon.png" },
+  icons: { icon: { url: "/brand/flightcoders-purple-icon.png", type: "image/png" }, shortcut: "/brand/flightcoders-purple-icon.png", apple: "/brand/flightcoders-purple-icon.png" },
   openGraph: { type: "website", locale: "en_US", url: siteUrl, siteName, title: "FlightCoders — Build what's next", description: "Artificial intelligence systems, intelligent software, and custom product development.", images: [ogImage] },
   twitter: { card: "summary_large_image", title: "FlightCoders — Build what's next", description: "Hire FlightCoders to build AI systems, intelligent software, and digital products.", images: [ogImage.url] },
   ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#090b0e" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0c0a12" };
 
 const organization = {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-icon.png`, image: `${siteUrl}${ogImage.url}`, description, sameAs: ["https://github.com/fcopensource"] },
+    { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: siteName, url: siteUrl, logo: `${siteUrl}/brand/flightcoders-purple-icon.png`, image: `${siteUrl}${ogImage.url}`, description, sameAs: ["https://github.com/fcopensource"] },
     { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: siteName, url: siteUrl, description, publisher: { "@id": `${siteUrl}/#organization` }, inLanguage: "en" },
   ],
 };
