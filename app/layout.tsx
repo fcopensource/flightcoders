@@ -7,6 +7,7 @@ import "./finishing.css";
 import "./theme.css";
 import "./company.css";
 import "./glass.css";
+import "./account.css";
 
 
 const poppins=Poppins({subsets:["latin"],weight:["400","500","600","700","800"],variable:"--font-flight-sans",display:"swap"});
